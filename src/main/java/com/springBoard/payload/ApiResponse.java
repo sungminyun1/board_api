@@ -27,4 +27,20 @@ public class ApiResponse implements Serializable {
         this.success = success;
         this.resMsg = resMsg;
     }
+
+    public Boolean getSuccess() {
+        return success;
+    }
+
+    public void setSuccess(Boolean success) {
+        this.success = success;
+    }
+
+    public String getResMsg() {
+        return resMsg;
+    }
+
+    public void setResMsg(String resMsg) {
+        this.resMsg = resMsg;
+    }
 }
