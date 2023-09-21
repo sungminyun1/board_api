@@ -4,6 +4,8 @@ import com.springBoard.user.model.User;
 import com.springBoard.user.model.UserSaveForm;
 import com.springBoard.user.model.UserSearchCond;
 import com.springBoard.user.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -11,6 +13,7 @@ import java.util.Optional;
 
 @Repository
 public class MyBatisUserRepository implements UserRepository {
+    private final Logger log = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
     private final UserMapper userMapper;
 
@@ -21,9 +24,11 @@ public class MyBatisUserRepository implements UserRepository {
     @Override
     public User save(UserSaveForm userSaveForm) {
         User user = new User();
+
         user.setUserName(userSaveForm.getUserName());
         user.setUserId(userSaveForm.getUserId());
         user.setPassword(userSaveForm.getPassword());
+
         userMapper.save(user);
         return user;
     }

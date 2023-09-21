@@ -1,13 +1,16 @@
 package com.springBoard.user.model;
 
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 public class UserSaveForm implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @NotBlank
+    @Email
+    @NotNull
     private String userId;
 
     @NotBlank

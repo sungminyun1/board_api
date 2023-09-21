@@ -39,6 +39,14 @@ class MyBatisUserRepositoryTest {
     }
 
     @Test
+    public void 저장_실패(){
+        UserSaveForm userSaveForm = new UserSaveForm();
+        userSaveForm.setPassword("pass");
+
+        User user = userRepository.save(userSaveForm);
+    }
+
+    @Test
     public void findAll(){
         List<User> users = userRepository.findAll();
         for (User u : users) {

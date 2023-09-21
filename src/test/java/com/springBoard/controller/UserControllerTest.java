@@ -34,7 +34,7 @@ class UserControllerTest {
     @Test
     public void signupTest() throws Exception {
         String content = objectMapper.writeValueAsString(
-                new UserSaveForm("testId","testPass","testName")
+                new UserSaveForm("abcd@gmail.com","testPass","testName")
         );
         mockMvc.perform(post("/user/signup")
                         .content(content)
