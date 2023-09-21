@@ -1,40 +1,28 @@
 package com.springBoard.user.model;
 
-import java.io.Serializable;
-import java.util.Date;
 
-public class User implements Serializable {
+import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
+
+public class UserSaveForm implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private Long id;
-
+    @NotBlank
     private String userId;
 
+    @NotBlank
     private String password;
 
+    @NotBlank
     private String userName;
 
-    private Date cDate;
+    public UserSaveForm() {
+    }
 
-    private Date lastLogin;
-
-    public User(){}
-
-    public User(Long id, String userId, String password, String userName, Date cDate, Date lastLogin) {
-        this.id = id;
+    public UserSaveForm(String userId, String password, String userName) {
         this.userId = userId;
         this.password = password;
         this.userName = userName;
-        this.cDate = cDate;
-        this.lastLogin = lastLogin;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getUserId() {
@@ -61,31 +49,12 @@ public class User implements Serializable {
         this.userName = userName;
     }
 
-    public Date getcDate() {
-        return cDate;
-    }
-
-    public void setcDate(Date cDate) {
-        this.cDate = cDate;
-    }
-
-    public Date getLastLogin() {
-        return lastLogin;
-    }
-
-    public void setLastLogin(Date lastLogin) {
-        this.lastLogin = lastLogin;
-    }
-
     @Override
     public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", userId='" + userId + '\'' +
+        return "UserSaveForm{" +
+                "userId='" + userId + '\'' +
                 ", password='" + password + '\'' +
                 ", userName='" + userName + '\'' +
-                ", cDate=" + cDate +
-                ", lastLogin=" + lastLogin +
                 '}';
     }
 }
