@@ -7,6 +7,8 @@ import com.springBoard.user.model.UserSaveForm;
 import com.springBoard.user.model.UserSearchCond;
 import com.springBoard.user.repository.UserRepository;
 import com.springBoard.user.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,6 +16,7 @@ import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
+    private final Logger log = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
     private final UserRepository userRepository;
 
