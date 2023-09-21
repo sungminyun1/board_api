@@ -2,10 +2,12 @@ package com.springBoard.user.repository.mybatis;
 
 import com.springBoard.user.model.User;
 import com.springBoard.user.model.UserSaveForm;
+import com.springBoard.user.model.UserSearchCond;
 import com.springBoard.user.repository.UserRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class MyBatisUserRepository implements UserRepository {
@@ -24,6 +26,11 @@ public class MyBatisUserRepository implements UserRepository {
         user.setPassword(userSaveForm.getPassword());
         userMapper.save(user);
         return user;
+    }
+
+    @Override
+    public Optional<User> find(UserSearchCond userSearchCond) {
+        return userMapper.find(userSearchCond);
     }
 
     @Override

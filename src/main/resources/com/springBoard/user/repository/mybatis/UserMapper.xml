@@ -8,6 +8,21 @@
         values (#{userId}, #{password}, #{userName})
     </insert>
 
+    <select id="find" resultType="com.springBoard.user.model.User">
+        select * from user
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="userId != null and userId != ''">
+                and user_id = #{userId}
+            </if>
+            <if test="userName != null and userName != ''">
+                and user_name = #{userName}
+            </if>
+        </where>
+    </select>
+
     <select id="findAll" resultType="com.springBoard.user.model.User">
         select * from user
     </select>
