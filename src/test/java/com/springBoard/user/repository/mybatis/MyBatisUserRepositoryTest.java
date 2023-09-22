@@ -3,6 +3,7 @@ package com.springBoard.user.repository.mybatis;
 import com.springBoard.user.model.User;
 import com.springBoard.user.model.UserSaveForm;
 import com.springBoard.user.model.UserSearchCond;
+import com.springBoard.user.model.UserUpdateDto;
 import com.springBoard.user.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,5 +54,16 @@ class MyBatisUserRepositoryTest {
         for (User u : users) {
             log.info(u.toString());
         }
+    }
+
+    @Test
+    public void update(){
+        UserSaveForm userSaveForm = new UserSaveForm("userId","pass","userName");
+        User user = userRepository.save(userSaveForm);
+
+        Date now = new Date();
+        UserUpdateDto userUpdateDto = new UserUpdateDto(user.getPassword(),user.getUserName(),now);
+        user = userRepository.updateById(user.getId(), userUpdateDto).get();
+        assertThat(user.getLastLogin().getTime() / 1000).isEqualTo(now.getTime() / 1000);
     }
 }

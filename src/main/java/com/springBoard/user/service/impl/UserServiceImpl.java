@@ -2,9 +2,7 @@ package com.springBoard.user.service.impl;
 
 import com.springBoard.exception.BadRequestException;
 import com.springBoard.payload.ApiResponse;
-import com.springBoard.user.model.User;
-import com.springBoard.user.model.UserSaveForm;
-import com.springBoard.user.model.UserSearchCond;
+import com.springBoard.user.model.*;
 import com.springBoard.user.repository.UserRepository;
 import com.springBoard.user.service.UserService;
 import org.slf4j.Logger;
@@ -12,10 +10,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.util.Date;
 import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
+
     private final Logger log = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
     private final UserRepository userRepository;
@@ -38,5 +40,33 @@ public class UserServiceImpl implements UserService {
 
         User user = userRepository.save(userSaveForm);
         return new ApiResponse(true, "회원 가입 완료");
+    }
+
+    @Override
+    @Transactional
+    public ApiResponse login(UserLoginForm userLoginForm, HttpServletRequest request) {
+        User loginUser = getLoginUser(userLoginForm);
+
+        if(loginUser == null){
+            ApiResponse apiResponse = new ApiResponse(false,"아이디 또는 비밀번호가 맞지 않습니다.");
+            throw new BadRequestException(apiResponse);
+        }
+
+        UserUpdateDto userUpdateDto = new UserUpdateDto(loginUser.getPassword(), loginUser.getUserName(), new Date());
+        loginUser = userRepository.updateById(loginUser.getId(), userUpdateDto).get();
+
+        HttpSession session = request.getSession();
+        session.setAttribute("user", loginUser);
+
+        return new ApiResponse(true, "로그인 성공");
+    }
+
+    public User getLoginUser(UserLoginForm userLoginForm){
+        UserSearchCond userSearchCond = new UserSearchCond();
+        userSearchCond.setUserId(userLoginForm.getUserId());
+
+        return userRepository.find(userSearchCond)
+                .filter((m) -> m.getPassword().equals(userLoginForm.getPassword()))
+                .orElse(null);
     }
 }

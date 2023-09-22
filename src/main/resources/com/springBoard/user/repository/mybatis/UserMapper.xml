@@ -27,4 +27,12 @@
         select * from user
     </select>
 
+    <update id="updateById">
+        update user
+        set password = #{updateParam.password},
+            user_name = #{updateParam.userName},
+            last_login = #{updateParam.lastLogin}
+        where id = #{id}
+    </update>
+
 </mapper>

@@ -1,6 +1,7 @@
 package com.springBoard.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.springBoard.user.model.UserLoginForm;
 import com.springBoard.user.model.UserSaveForm;
 import com.springBoard.user.repository.UserRepository;
 import com.springBoard.user.service.UserService;
@@ -15,10 +16,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -53,6 +53,66 @@ class UserControllerTest {
         mockMvc.perform(post("/user/signup")
                         .content(content)
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andDo(print())
+                .andExpect(jsonPath("success").value(false))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void 로그인() throws Exception{
+        String content = objectMapper.writeValueAsString(
+                new UserSaveForm("abcd@gmail.com","testPass","testName")
+        );
+        mockMvc.perform(post("/user/signup")
+                        .content(content)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE));
+
+        String loginContent = objectMapper.writeValueAsString(
+                new UserLoginForm("abcd@gmail.com", "testPass")
+        );
+        mockMvc.perform(post("/user/login")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(loginContent))
+                .andDo(print())
+                .andExpect(jsonPath("success").value(true))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void 로그인_실패() throws Exception{
+        String content = objectMapper.writeValueAsString(
+                new UserSaveForm("abcd@gmail.com","testPass","testName")
+        );
+        mockMvc.perform(post("/user/signup")
+                .content(content)
+                .contentType(MediaType.APPLICATION_JSON_VALUE));
+
+        String loginContent = objectMapper.writeValueAsString(
+                new UserLoginForm("abcd@gmail.com", "testPass2")
+        );
+        mockMvc.perform(post("/user/login")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(loginContent))
+                .andDo(print())
+                .andExpect(jsonPath("success").value(false))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void 로그인_유효성_실패() throws Exception{
+        String content = objectMapper.writeValueAsString(
+                new UserSaveForm("abcd@gmail.com","testPass","testName")
+        );
+        mockMvc.perform(post("/user/signup")
+                .content(content)
+                .contentType(MediaType.APPLICATION_JSON_VALUE));
+
+        String loginContent = objectMapper.writeValueAsString(
+                new UserLoginForm("abcd", "testPass")
+        );
+        mockMvc.perform(post("/user/login")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(loginContent))
                 .andDo(print())
                 .andExpect(jsonPath("success").value(false))
                 .andExpect(status().is4xxClientError());
