@@ -38,4 +38,10 @@ public class UserController {
         ApiResponse apiResponse = userService.login(userLoginForm, request);
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<ApiResponse> logout(HttpServletRequest request){
+        ApiResponse apiResponse = userService.logout(request);
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+    }
 }

@@ -69,4 +69,14 @@ public class UserServiceImpl implements UserService {
                 .filter((m) -> m.getPassword().equals(userLoginForm.getPassword()))
                 .orElse(null);
     }
+
+    @Override
+    public ApiResponse logout(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+
+        return new ApiResponse(true, "로그아웃 성공");
+    }
 }

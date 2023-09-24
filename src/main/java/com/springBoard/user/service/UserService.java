@@ -10,4 +10,6 @@ public interface UserService {
     ApiResponse addUser(UserSaveForm userSaveForm);
 
     ApiResponse login(UserLoginForm userLoginForm, HttpServletRequest request);
+
+    ApiResponse logout(HttpServletRequest request);
 }
