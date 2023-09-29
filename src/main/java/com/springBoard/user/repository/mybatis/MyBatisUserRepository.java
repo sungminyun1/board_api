@@ -24,11 +24,11 @@ public class MyBatisUserRepository implements UserRepository {
 
     @Override
     public User save(UserSaveForm userSaveForm) {
-        User user = new User();
-
-        user.setUserName(userSaveForm.getUserName());
-        user.setUserId(userSaveForm.getUserId());
-        user.setPassword(userSaveForm.getPassword());
+        User user = new User.Builder()
+                .userId(userSaveForm.getUserId())
+                .userName(userSaveForm.getUserName())
+                .password(userSaveForm.getPassword())
+                .build();
 
         userMapper.save(user);
         return user;

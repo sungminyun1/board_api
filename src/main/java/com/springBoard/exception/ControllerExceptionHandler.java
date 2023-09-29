@@ -21,8 +21,6 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(DataIntegrityViolationException.class)
     @ResponseBody
     public ResponseEntity<ApiResponse> resolveException(DataIntegrityViolationException exception){
-        log.info("here i am sql ex");
-
         return new ResponseEntity<>(new ApiResponse(), HttpStatus.BAD_REQUEST);
     }
 

@@ -88,4 +88,34 @@ public class User implements Serializable {
                 ", lastLogin=" + lastLogin +
                 '}';
     }
+
+    static public class Builder {
+        private Long id;
+        private String userId;
+        private String password;
+        private String userName;
+        private Date cDate;
+        private Date lastLogin;
+
+        public Builder(){};
+
+        public Builder userId(String userId){
+            this.userId = userId;
+            return this;
+        }
+
+        public Builder password(String password){
+            this.password = password;
+            return this;
+        }
+
+        public Builder userName(String userName) {
+            this.userName = userName;
+            return this;
+        }
+
+        public User build(){
+            return new User(id,userId,password,userName,cDate,lastLogin);
+        }
+    }
 }
