@@ -118,4 +118,74 @@ public class Post implements Serializable {
                 ", text='" + text + '\'' +
                 '}';
     }
+
+    public static class Builder {
+        private Long id;
+        private String rid;
+        private Long boardId;
+        private Long userId;
+        private Long commentCount;
+        private Long readCount;
+        private Date cDate;
+        private Date uDate;
+        private String title;
+        private String text;
+
+        public Builder(){};
+
+        public Post build(){
+            return new Post(id, rid, boardId, userId, commentCount, readCount,
+                    cDate, uDate, title, text);
+        }
+
+        public Builder id(Long id){
+            this.id = id;
+            return this;
+        }
+
+        public Builder rid(String rid){
+            this.rid = rid;
+            return this;
+        }
+
+        public Builder boardId(Long boardId){
+            this.boardId = boardId;
+            return this;
+        }
+
+        public Builder userId(Long userId){
+            this.userId = userId;
+            return this;
+        }
+
+        public Builder commentCount(Long commentCount){
+            this.commentCount = commentCount;
+            return this;
+        }
+
+        public Builder readCount(Long readCount){
+            this.readCount = readCount;
+            return this;
+        }
+
+        public Builder cDate(Date cDate){
+            this.cDate = cDate;
+            return this;
+        }
+
+        public Builder uDate(Date uDate){
+            this.uDate = uDate;
+            return this;
+        }
+
+        public Builder title(String title){
+            this.title = title;
+            return this;
+        }
+
+        public Builder text(String text){
+            this.text = text;
+            return this;
+        }
+    }
 }

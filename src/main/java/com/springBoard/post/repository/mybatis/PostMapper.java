@@ -9,4 +9,6 @@ import java.util.List;
 @Mapper
 public interface PostMapper {
     List<Post> findList(PostSearchCond postSearchCond);
+
+    void save(Post post);
 }

@@ -9,5 +9,8 @@
         limit #{limit} offset #{offset}
     </select>
 
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+        insert into post (rid,board_id)
+    </insert>
 
 </mapper>
