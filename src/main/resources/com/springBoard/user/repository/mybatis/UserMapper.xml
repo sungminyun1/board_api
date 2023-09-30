@@ -20,6 +20,12 @@
             <if test="userName != null and userName != ''">
                 and user_name = #{userName}
             </if>
+            <if test="hostIp != null and hostIp != ''">
+                and host_ip = #{hostIp}
+            </if>
+            <if test="isUser != null">
+                and is_user = #{isUser}
+            </if>
         </where>
     </select>
 

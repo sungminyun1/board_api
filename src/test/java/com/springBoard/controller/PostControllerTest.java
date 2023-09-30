@@ -36,7 +36,7 @@ class PostControllerTest {
         mockMvc.perform(get("/board/userOnly/post")
                         .param("limit","10")
                         .param("offset","0")
-                        .session(generateSession()))
+                        .session(generateUserSession()))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
@@ -49,6 +49,37 @@ class PostControllerTest {
                 .andDo(print())
                 .andExpect(status().is4xxClientError());
     }
+
+    @Test
+    public void 유저전용게시판목록조회_실패2() throws Exception{
+
+        mockMvc.perform(get("/board/userOnly/post")
+                        .param("limit","10")
+                        .param("offset","0")
+                        .session(generateTmpSession()))
+                .andDo(print())
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void 비회원전용게시판조회() throws Exception {
+        mockMvc.perform(get("/board/notUserOnly/post")
+                        .param("limit","10")
+                        .param("offset","0")
+                        .session(generateTmpSession()))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void 비회원전용게시판조회2() throws Exception {
+        mockMvc.perform(get("/board/notUserOnly/post")
+                        .param("limit","10")
+                        .param("offset","0"))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
 
     @Test
     public void 존재하지않는_게시판조회() throws Exception{
@@ -65,18 +96,35 @@ class PostControllerTest {
                 new PostWriteForm("테스트 제목", "테스트 내용")
         );
         mockMvc.perform(post("/board/userOnly/post")
-                .session(generateSession())
+                .session(generateUserSession())
                 .content(writeContent)
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andDo(print());
     }
 
-    public MockHttpSession generateSession() throws Exception{
+    public MockHttpSession generateUserSession() throws Exception{
         MockHttpSession session = new MockHttpSession();
-        String userSession = objectMapper.writeValueAsString(
-                new User.Builder().userName("test").password("testPass").build()
-        );
-        session.setAttribute("user",userSession);
+        User user = new User.Builder()
+                .userName("test")
+                .password("testPass")
+                .userId("testUserId")
+                .hostIp("123.456.789")
+                .isUser(1)
+                .build();
+        session.setAttribute("user",user);
+        return session;
+    }
+
+    public MockHttpSession generateTmpSession() throws Exception{
+        MockHttpSession session = new MockHttpSession();
+        User user = new User.Builder()
+                .userName("test")
+                .password("testPass")
+                .userId("testUserId")
+                .hostIp("123.456.789")
+                .isUser(0)
+                .build();
+        session.setAttribute("user",user);
         return session;
     }
 }
