@@ -1,6 +1,9 @@
 package com.springBoard.controller;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.springBoard.payload.ApiResponseWithData;
+import com.springBoard.post.model.Post;
 import com.springBoard.post.model.PostWriteForm;
 import com.springBoard.user.model.User;
 import org.junit.jupiter.api.Test;
@@ -18,8 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.http.HttpSession;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -121,6 +123,37 @@ class PostControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk());
 
+    }
+
+    @Test
+    public void 비회원전용_게시글_수정() throws Exception {
+        String writeContent = objectMapper.writeValueAsString(
+                new PostWriteForm("테스트 제목", "테스트 내용")
+        );
+        MvcResult mvcResult = mockMvc.perform(post("/board/notUserOnly/post")
+//                        .session(generateUserSession())
+                        .content(writeContent)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+
+        ApiResponseWithData<Post> resData = objectMapper.readValue(
+                mvcResult.getResponse().getContentAsString(), new TypeReference<ApiResponseWithData<Post>>() {
+                });
+
+        Post oriData = resData.getData();
+        String rid = oriData.getRid();
+        String writeContent2 = objectMapper.writeValueAsString(
+                new PostWriteForm("테스트 제목 수정", "테스트 내용 수정")
+        );
+
+        mockMvc.perform(put("/board/notUserOnly/post/" + rid)
+//                        .session(generateUserSession())
+                        .content(writeContent2)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andDo(print())
+                .andExpect(status().isOk());
     }
 
 

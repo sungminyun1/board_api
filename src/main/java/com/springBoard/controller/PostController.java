@@ -42,4 +42,15 @@ public class PostController {
         ApiResponse apiResponse = postService.writePost(boardUrl, postWriteForm, request);
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
+
+    @PutMapping("/{boardUrl}/post/{postRid}")
+    public ResponseEntity<ApiResponse> updatePost(
+            @PathVariable String boardUrl,
+            @PathVariable String postRid,
+            @RequestBody @Validated PostWriteForm postWriteForm,
+            HttpServletRequest request
+    ){
+        ApiResponse apiResponse = postService.updatePost(boardUrl, postRid, postWriteForm, request);
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+    }
 }

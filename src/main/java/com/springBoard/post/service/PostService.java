@@ -9,5 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 public interface PostService {
     ApiResponse getPostList(String boardUrl, Integer limit, Integer offset);
 
-    ApiResponse writePost(String boardurl, PostWriteForm postWriteForm, HttpServletRequest request);
+    ApiResponse writePost(String boardUrl, PostWriteForm postWriteForm, HttpServletRequest request);
+
+    ApiResponse updatePost(String boardUrl, String postRid, PostWriteForm postWriteForm, HttpServletRequest request);
 }

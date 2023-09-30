@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -65,5 +66,32 @@ public class PostServiceImpl implements PostService {
 
         postRepository.save(post);
         return new ApiResponseWithData<Post>(true,"게시물 작성 성공",post);
+    }
+
+    @Override
+    public ApiResponse updatePost(String boardUrl, String postRid, PostWriteForm postWriteForm, HttpServletRequest request) {
+        Board board = Board.boardUrlMap.get("/" + boardUrl);
+
+        User sessionUser = (User)request.getSession().getAttribute("user");
+
+        PostSearchCond postSearchCond = new PostSearchCond.Builder().rid(postRid).build();
+        Optional<Post> targetPost = postRepository.find(postSearchCond);
+        if(targetPost.isEmpty()){
+            ApiResponse apiResponse = new ApiResponse(false, "존재하지 않는 게시글입니다.");
+            throw new BadRequestException(apiResponse);
+        }
+
+        if(!targetPost.get().getUserId().equals(sessionUser.getId())){
+            ApiResponse apiResponse = new ApiResponse(false, "수정 권한이 없습니다.");
+            throw new BadRequestException(apiResponse);
+        }
+
+        targetPost.get().setuDate(new Date());
+        targetPost.get().setTitle(postWriteForm.getTitle());
+        targetPost.get().setText(postWriteForm.getContent());
+
+        postRepository.updateById(targetPost.get());
+
+        return new ApiResponseWithData<Post>(true,"게시물 수정 성공",targetPost.get());
     }
 }

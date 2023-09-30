@@ -14,4 +14,27 @@
         values (#{rid}, #{boardId}, #{userId}, #{title}, #{text})
     </insert>
 
+    <select id="find" resultType="com.springBoard.post.model.Post">
+        select * from post
+        <where>
+            <if test="rid != null and rid != ''">
+                and rid = #{rid}
+            </if>
+            <if test="boardId != null">
+                and board_id = #{boardId}
+            </if>
+        </where>
+    </select>
+
+    <update id="updateById">
+        update post
+        set board_id = #{boardId},
+            comment_count = #{commentCount},
+            read_count = #{readCount},
+            u_date = #{uDate},
+            title = #{title},
+            text = #{text}
+        where id = #{id}
+    </update>
+
 </mapper>

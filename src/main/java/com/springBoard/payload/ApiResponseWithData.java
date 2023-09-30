@@ -14,6 +14,9 @@ public class ApiResponseWithData<T> extends ApiResponse {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private T data;
 
+    public ApiResponseWithData() {
+    }
+
     public ApiResponseWithData(Boolean success, String resMsg, List<T> list) {
         super(success, resMsg);
         this.list = list;

@@ -5,10 +5,15 @@ import com.springBoard.post.model.PostSearchCond;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
+import java.util.Optional;
 
 @Mapper
 public interface PostMapper {
     List<Post> findList(PostSearchCond postSearchCond);
 
     void save(Post post);
+
+    Optional<Post> find(PostSearchCond postSearchCond);
+
+    void updateById(Post post);
 }

@@ -6,6 +6,7 @@ import com.springBoard.post.repository.PostRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class MyBatisPostRepository implements PostRepository {
@@ -20,5 +21,15 @@ public class MyBatisPostRepository implements PostRepository {
     @Override
     public void save(Post post) {
         postMapper.save(post);
+    }
+
+    @Override
+    public Optional<Post> find(PostSearchCond postSearchCond) {
+        return postMapper.find(postSearchCond);
+    }
+
+    @Override
+    public void updateById(Post post) {
+        postMapper.updateById(post);
     }
 }
