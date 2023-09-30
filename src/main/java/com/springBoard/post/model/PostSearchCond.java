@@ -3,9 +3,9 @@ package com.springBoard.post.model;
 public class PostSearchCond {
     private Integer limit;
     private Integer offset;
-    private Integer boardId;
+    private Long boardId;
 
-    public PostSearchCond(Integer limit, Integer offset, Integer boardId) {
+    public PostSearchCond(Integer limit, Integer offset, Long boardId) {
         this.limit = limit;
         this.offset = offset;
         this.boardId = boardId;
@@ -14,7 +14,7 @@ public class PostSearchCond {
     public static class Builder {
         private Integer limit;
         private Integer offset;
-        private Integer boardId;
+        private Long boardId;
 
         public Builder(){};
 
@@ -28,7 +28,7 @@ public class PostSearchCond {
             return this;
         }
 
-        public Builder boardId(Integer boardId){
+        public Builder boardId(Long boardId){
             this.boardId = boardId;
             return this;
         }

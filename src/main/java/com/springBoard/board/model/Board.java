@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class Board {
-    public static HashMap<String, String> boardUrlMap = new HashMap<>();
+    public static HashMap<String, Board> boardUrlMap = new HashMap<>();
 
     private Long id;
     private String name;
@@ -20,7 +20,7 @@ public class Board {
 
     public static void initBoardUrlMap(List<Board> boards){
         for(Board board : boards){
-            boardUrlMap.put(board.getUrlPath(), board.getPermission());
+            boardUrlMap.put(board.getUrlPath(), board);
         }
     }
 

@@ -27,7 +27,7 @@ class MyBatisPostRepositoryTest {
         PostSearchCond postSearchCond = new PostSearchCond.Builder()
                 .limit(10)
                 .offset(0)
-                .boardId(1)
+                .boardId(1L)
                 .build();
         List<Post> posts = postRepository.findList(postSearchCond);
         for(Post p : posts){
