@@ -12,4 +12,6 @@ public interface PostService {
     ApiResponse writePost(String boardUrl, PostWriteForm postWriteForm, HttpServletRequest request);
 
     ApiResponse updatePost(String boardUrl, String postRid, PostWriteForm postWriteForm, HttpServletRequest request);
+
+    ApiResponse deletePost(String boardUrl, String postRid, HttpServletRequest request);
 }

@@ -156,6 +156,33 @@ class PostControllerTest {
                 .andExpect(status().isOk());
     }
 
+    @Test
+    public void 비회원전용_게시글_삭제() throws Exception {
+        String writeContent = objectMapper.writeValueAsString(
+                new PostWriteForm("테스트 제목", "테스트 내용")
+        );
+        MvcResult mvcResult = mockMvc.perform(post("/board/notUserOnly/post")
+//                        .session(generateUserSession())
+                        .content(writeContent)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+
+        ApiResponseWithData<Post> resData = objectMapper.readValue(
+                mvcResult.getResponse().getContentAsString(), new TypeReference<ApiResponseWithData<Post>>() {
+                });
+
+        Post oriData = resData.getData();
+        String rid = oriData.getRid();
+
+        mockMvc.perform(delete("/board/notUserOnly/post/" + rid)
+//                        .session(generateUserSession())
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
 
     public MockHttpSession generateUserSession() throws Exception{
         MockHttpSession session = new MockHttpSession();

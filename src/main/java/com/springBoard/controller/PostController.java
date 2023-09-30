@@ -53,4 +53,14 @@ public class PostController {
         ApiResponse apiResponse = postService.updatePost(boardUrl, postRid, postWriteForm, request);
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
+
+    @DeleteMapping("/{boardUrl}/post/{postRid}")
+    public ResponseEntity<ApiResponse> deletePost(
+            @PathVariable String boardUrl,
+            @PathVariable String postRid,
+            HttpServletRequest request
+    ){
+        ApiResponse apiResponse = postService.deletePost(boardUrl, postRid, request);
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+    }
 }

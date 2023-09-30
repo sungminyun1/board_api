@@ -15,4 +15,6 @@ public interface PostRepository {
     Optional<Post> find(PostSearchCond postSearchCond);
 
     void updateById(Post post);
+
+    void deleteById(Long id);
 }

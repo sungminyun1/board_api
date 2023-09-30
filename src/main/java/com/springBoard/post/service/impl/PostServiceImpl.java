@@ -1,6 +1,7 @@
 package com.springBoard.post.service.impl;
 
 import com.springBoard.board.model.Board;
+import com.springBoard.exception.AccessDeniedException;
 import com.springBoard.exception.BadRequestException;
 import com.springBoard.payload.ApiResponse;
 import com.springBoard.payload.ApiResponseWithData;
@@ -83,7 +84,7 @@ public class PostServiceImpl implements PostService {
 
         if(!targetPost.get().getUserId().equals(sessionUser.getId())){
             ApiResponse apiResponse = new ApiResponse(false, "수정 권한이 없습니다.");
-            throw new BadRequestException(apiResponse);
+            throw new AccessDeniedException(apiResponse);
         }
 
         targetPost.get().setuDate(new Date());
@@ -93,5 +94,27 @@ public class PostServiceImpl implements PostService {
         postRepository.updateById(targetPost.get());
 
         return new ApiResponseWithData<Post>(true,"게시물 수정 성공",targetPost.get());
+    }
+
+    @Override
+    public ApiResponse deletePost(String boardUrl, String postRid, HttpServletRequest request) {
+        Board board = Board.boardUrlMap.get("/" + boardUrl);
+
+        User sessionUser = (User)request.getSession().getAttribute("user");
+
+        PostSearchCond postSearchCond = new PostSearchCond.Builder().rid(postRid).build();
+        Optional<Post> targetPost = postRepository.find(postSearchCond);
+        if(targetPost.isEmpty()){
+            ApiResponse apiResponse = new ApiResponse(false, "존재하지 않는 게시글입니다.");
+            throw new BadRequestException(apiResponse);
+        }
+
+        if(!targetPost.get().getUserId().equals(sessionUser.getId())){
+            ApiResponse apiResponse = new ApiResponse(false, "삭제 권한이 없습니다.");
+            throw new AccessDeniedException(apiResponse);
+        }
+        
+        postRepository.deleteById(targetPost.get().getId());
+        return new ApiResponse(true, "게시글 삭제 성공");
     }
 }

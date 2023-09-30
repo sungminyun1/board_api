@@ -3,6 +3,7 @@ package com.springBoard.post.repository.mybatis;
 import com.springBoard.post.model.Post;
 import com.springBoard.post.model.PostSearchCond;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,4 +17,6 @@ public interface PostMapper {
     Optional<Post> find(PostSearchCond postSearchCond);
 
     void updateById(Post post);
+
+    void deleteById(@Param("id") Long id);
 }

@@ -32,4 +32,9 @@ public class MyBatisPostRepository implements PostRepository {
     public void updateById(Post post) {
         postMapper.updateById(post);
     }
+
+    @Override
+    public void deleteById(Long id) {
+        postMapper.deleteById(id);
+    }
 }
