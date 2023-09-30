@@ -7,7 +7,7 @@ import com.springBoard.user.model.UserSaveForm;
 import javax.servlet.http.HttpServletRequest;
 
 public interface UserService {
-    ApiResponse addUser(UserSaveForm userSaveForm);
+    ApiResponse addUser(UserSaveForm userSaveForm, HttpServletRequest request);
 
     ApiResponse login(UserLoginForm userLoginForm, HttpServletRequest request);
 

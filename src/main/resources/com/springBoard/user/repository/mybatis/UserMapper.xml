@@ -4,8 +4,8 @@
 <mapper namespace="com.springBoard.user.repository.mybatis.UserMapper">
 
     <insert id="save" useGeneratedKeys="true" keyProperty="id">
-        insert into user (user_id, password, user_name)
-        values (#{userId}, #{password}, #{userName})
+        insert into user (user_id, password, user_name, host_ip, is_user)
+        values (#{userId}, #{password}, #{userName}, #{hostIp}, #{isUser})
     </insert>
 
     <select id="find" resultType="com.springBoard.user.model.User">
@@ -29,9 +29,12 @@
 
     <update id="updateById">
         update user
-        set password = #{updateParam.password},
-            user_name = #{updateParam.userName},
-            last_login = #{updateParam.lastLogin}
+        set user_id = #{userId},
+            password = #{password},
+            user_name = #{userName},
+            last_login = #{lastLogin},
+            host_ip = #{hostIp},
+            is_user = #{isUser}
         where id = #{id}
     </update>
 

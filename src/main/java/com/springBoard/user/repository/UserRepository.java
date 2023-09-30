@@ -9,12 +9,12 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository {
-    User save(UserSaveForm userSaveForm);
+    void save(User user);
 
     Optional<User> find(UserSearchCond userSearchCond);
 
     List<User> findAll();
 
-    Optional<User> updateById(Long id, UserUpdateDto userUpdateDto);
+    void updateById(User user);
 
 }

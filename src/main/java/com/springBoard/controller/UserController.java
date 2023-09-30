@@ -28,8 +28,8 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<ApiResponse> signup(@RequestBody @Validated UserSaveForm userSaveForm){
-        ApiResponse apiResponse = userService.addUser(userSaveForm);
+    public ResponseEntity<ApiResponse> signup(@RequestBody @Validated UserSaveForm userSaveForm, HttpServletRequest request){
+        ApiResponse apiResponse = userService.addUser(userSaveForm, request);
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 

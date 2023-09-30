@@ -12,11 +12,13 @@ import com.springBoard.post.repository.PostRepository;
 import com.springBoard.post.service.PostService;
 import com.springBoard.user.model.User;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Service
+@Transactional
 public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;

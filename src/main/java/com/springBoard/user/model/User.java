@@ -7,26 +7,25 @@ public class User implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Long id;
-
     private String userId;
-
     private String password;
-
     private String userName;
-
     private Date cDate;
-
     private Date lastLogin;
+    private String hostIp;
+    private Integer isUser;
 
     public User(){}
 
-    public User(Long id, String userId, String password, String userName, Date cDate, Date lastLogin) {
+    public User(Long id, String userId, String password, String userName, Date cDate, Date lastLogin, String hostIp, Integer isUser) {
         this.id = id;
         this.userId = userId;
         this.password = password;
         this.userName = userName;
         this.cDate = cDate;
         this.lastLogin = lastLogin;
+        this.hostIp = hostIp;
+        this.isUser = isUser;
     }
 
     public Long getId() {
@@ -77,6 +76,22 @@ public class User implements Serializable {
         this.lastLogin = lastLogin;
     }
 
+    public String getHostIp() {
+        return hostIp;
+    }
+
+    public void setHostIp(String hostIp) {
+        this.hostIp = hostIp;
+    }
+
+    public Integer getisUser() {
+        return isUser;
+    }
+
+    public void setisUser(Integer isUser) {
+        this.isUser = isUser;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -86,6 +101,8 @@ public class User implements Serializable {
                 ", userName='" + userName + '\'' +
                 ", cDate=" + cDate +
                 ", lastLogin=" + lastLogin +
+                ", hostIp='" + hostIp + '\'' +
+                ", isUser=" + isUser +
                 '}';
     }
 
@@ -96,6 +113,8 @@ public class User implements Serializable {
         private String userName;
         private Date cDate;
         private Date lastLogin;
+        private String hostIp;
+        private Integer isUser;
 
         public Builder(){};
 
@@ -114,8 +133,18 @@ public class User implements Serializable {
             return this;
         }
 
+        public Builder hostIp(String hostIP){
+            this.hostIp = hostIP;
+            return this;
+        }
+
+        public Builder isUser(Integer isUser){
+            this.isUser = isUser;
+            return this;
+        }
+
         public User build(){
-            return new User(id,userId,password,userName,cDate,lastLogin);
+            return new User(id,userId,password,userName,cDate,lastLogin,hostIp,isUser);
         }
     }
 }

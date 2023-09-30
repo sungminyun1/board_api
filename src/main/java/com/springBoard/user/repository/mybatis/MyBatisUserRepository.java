@@ -23,23 +23,13 @@ public class MyBatisUserRepository implements UserRepository {
     }
 
     @Override
-    public User save(UserSaveForm userSaveForm) {
-        User user = new User.Builder()
-                .userId(userSaveForm.getUserId())
-                .userName(userSaveForm.getUserName())
-                .password(userSaveForm.getPassword())
-                .build();
-
+    public void save(User user) {
         userMapper.save(user);
-        return user;
     }
 
     @Override
-    public Optional<User> updateById(Long id, UserUpdateDto userUpdateDto) {
-        userMapper.updateById(id,userUpdateDto);
-        UserSearchCond userSearchCond = new UserSearchCond();
-        userSearchCond.setId(id);
-        return find(userSearchCond);
+    public void updateById(User user) {
+        userMapper.updateById(user);
     }
 
     @Override

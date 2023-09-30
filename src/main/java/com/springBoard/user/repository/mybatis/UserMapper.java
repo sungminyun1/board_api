@@ -18,5 +18,5 @@ public interface UserMapper {
 
     List<User> findAll();
 
-    void updateById(@Param("id") Long id, @Param("updateParam")UserUpdateDto userUpdateDto);
+    void updateById(User user);
 }

@@ -2,13 +2,11 @@ package com.springBoard.util;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-class ResourceIdUtilTest {
+class UtilTest {
 
     @Test
     public void uuidTest(){
-        String uuid = ResourceIdUtil.generate();
+        String uuid = Util.generateRid();
         System.out.print(uuid);
     }
 }

@@ -5,6 +5,7 @@ import com.springBoard.payload.ApiResponse;
 import com.springBoard.user.model.*;
 import com.springBoard.user.repository.UserRepository;
 import com.springBoard.user.service.UserService;
+import com.springBoard.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -28,7 +29,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public ApiResponse addUser(UserSaveForm userSaveForm) {
+    public ApiResponse addUser(UserSaveForm userSaveForm, HttpServletRequest request) {
         // userId 중복 검사
         UserSearchCond userDupCheck = new UserSearchCond();
         userDupCheck.setUserId(userSaveForm.getUserId());
@@ -37,8 +38,14 @@ public class UserServiceImpl implements UserService {
             ApiResponse apiResponse = new ApiResponse(false, "중복된 userId가 존재 합니다.");
             throw new BadRequestException(apiResponse);
         }
-
-        User user = userRepository.save(userSaveForm);
+        User user = new User.Builder()
+                .isUser(1)
+                .hostIp(Util.getClientIp(request))
+                .userId(userSaveForm.getUserId())
+                .userName(userSaveForm.getUserName())
+                .password(userSaveForm.getPassword())
+                .build();
+        userRepository.save(user);
         return new ApiResponse(true, "회원 가입 완료");
     }
 
@@ -52,8 +59,8 @@ public class UserServiceImpl implements UserService {
             throw new BadRequestException(apiResponse);
         }
 
-        UserUpdateDto userUpdateDto = new UserUpdateDto(loginUser.getPassword(), loginUser.getUserName(), new Date());
-        loginUser = userRepository.updateById(loginUser.getId(), userUpdateDto).get();
+        loginUser.setLastLogin(new Date());
+        userRepository.updateById(loginUser);
 
         HttpSession session = request.getSession();
         session.setAttribute("user", loginUser);
