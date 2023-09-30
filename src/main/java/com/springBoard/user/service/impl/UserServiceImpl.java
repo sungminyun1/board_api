@@ -34,7 +34,7 @@ public class UserServiceImpl implements UserService {
         UserSearchCond userDupCheck = new UserSearchCond();
         userDupCheck.setUserId(userSaveForm.getUserId());
         Optional<User> dupUser = userRepository.find(userDupCheck);
-        if(dupUser.isPresent()){
+        if (dupUser.isPresent()) {
             ApiResponse apiResponse = new ApiResponse(false, "중복된 userId가 존재 합니다.");
             throw new BadRequestException(apiResponse);
         }

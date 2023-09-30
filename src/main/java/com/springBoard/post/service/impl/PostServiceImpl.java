@@ -11,15 +11,20 @@ import com.springBoard.post.model.PostWriteForm;
 import com.springBoard.post.repository.PostRepository;
 import com.springBoard.post.service.PostService;
 import com.springBoard.user.model.User;
+import com.springBoard.util.Util;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 import java.util.List;
 
 @Service
 @Transactional
 public class PostServiceImpl implements PostService {
+    private final Logger log = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
     private final PostRepository postRepository;
 
@@ -45,21 +50,20 @@ public class PostServiceImpl implements PostService {
     public ApiResponse writePost(String boardUrl, PostWriteForm postWriteForm, HttpServletRequest request) {
         Board board = Board.boardUrlMap.get("/" + boardUrl);
 
-        Long userId;
-
-        if(board.getPermission().equals(PostPermission.USER)){
-            User user = (User)request.getSession().getAttribute("user");
-            userId = user.getId();
-        }else{
-            userId = 1L;
-        }
+        User sessionUser = (User)request.getSession().getAttribute("user");
 
         Post post = new Post.Builder()
+                .rid(Util.generateRid())
+                .boardId(board.getId())
+                .userId(sessionUser.getId())
+                .commentCount(0L)
+                .readCount(0L)
+                .cDate(new Date())
                 .title(postWriteForm.getTitle())
                 .text(postWriteForm.getContent())
-                .boardId(board.getId())
-                .userId(userId)
                 .build();
-        return null;
+
+        postRepository.save(post);
+        return new ApiResponseWithData<Post>(true,"게시물 작성 성공",post);
     }
 }

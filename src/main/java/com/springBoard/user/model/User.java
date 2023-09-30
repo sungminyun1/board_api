@@ -118,6 +118,11 @@ public class User implements Serializable {
 
         public Builder(){};
 
+        public Builder id(Long id){
+            this.id = id;
+            return this;
+        }
+
         public Builder userId(String userId){
             this.userId = userId;
             return this;

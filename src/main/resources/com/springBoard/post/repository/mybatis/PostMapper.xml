@@ -10,7 +10,8 @@
     </select>
 
     <insert id="save" useGeneratedKeys="true" keyProperty="id">
-        insert into post (rid,board_id)
+        insert into post (rid,board_id,user_id,title,text)
+        values (#{rid}, #{boardId}, #{userId}, #{title}, #{text})
     </insert>
 
 </mapper>

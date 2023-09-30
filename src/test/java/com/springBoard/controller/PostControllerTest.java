@@ -4,12 +4,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.springBoard.post.model.PostWriteForm;
 import com.springBoard.user.model.User;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpSession;
@@ -24,6 +27,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @Transactional
 class PostControllerTest {
+    private final Logger log = LoggerFactory.getLogger(this.getClass().getSimpleName());
+
     @Autowired
     MockMvc mockMvc;
 
@@ -91,20 +96,38 @@ class PostControllerTest {
     }
 
     @Test
-    public void 게시글_작성() throws Exception {
+    public void 회원전용_게시글_작성() throws Exception {
         String writeContent = objectMapper.writeValueAsString(
                 new PostWriteForm("테스트 제목", "테스트 내용")
         );
         mockMvc.perform(post("/board/userOnly/post")
-                .session(generateUserSession())
-                .content(writeContent)
-                .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andDo(print());
+                        .session(generateUserSession())
+                        .content(writeContent)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andDo(print())
+                .andExpect(status().isOk());
+
     }
+
+    @Test
+    public void 비회원전용_게시글_작성() throws Exception {
+        String writeContent = objectMapper.writeValueAsString(
+                new PostWriteForm("테스트 제목", "테스트 내용")
+        );
+        mockMvc.perform(post("/board/notUserOnly/post")
+//                        .session(generateUserSession())
+                        .content(writeContent)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+    }
+
 
     public MockHttpSession generateUserSession() throws Exception{
         MockHttpSession session = new MockHttpSession();
         User user = new User.Builder()
+                .id(1L)
                 .userName("test")
                 .password("testPass")
                 .userId("testUserId")
@@ -127,4 +150,6 @@ class PostControllerTest {
         session.setAttribute("user",user);
         return session;
     }
+
+
 }
