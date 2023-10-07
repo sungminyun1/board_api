@@ -157,6 +157,21 @@ class PostControllerTest {
     }
 
     @Test
+    public void 비회원전용_게시글_수정_실패() throws Exception {
+        String rid = "test";
+        String writeContent2 = objectMapper.writeValueAsString(
+                new PostWriteForm("테스트 제목 수정", "테스트 내용 수정")
+        );
+
+        mockMvc.perform(put("/board/notUserOnly/post/" + rid)
+//                        .session(generateUserSession())
+                        .content(writeContent2)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andDo(print())
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
     public void 비회원전용_게시글_삭제() throws Exception {
         String writeContent = objectMapper.writeValueAsString(
                 new PostWriteForm("테스트 제목", "테스트 내용")

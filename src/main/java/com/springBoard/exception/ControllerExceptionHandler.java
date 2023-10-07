@@ -3,6 +3,8 @@ package com.springBoard.exception;
 import com.springBoard.payload.ApiResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,7 +38,6 @@ public class ControllerExceptionHandler {
     @ResponseBody
     public ResponseEntity<ApiResponse> resolveException(AccessDeniedException exception){
         ApiResponse apiResponse = exception.getApiResponse();
-
         return new ResponseEntity<>(apiResponse, HttpStatus.FORBIDDEN);
     }
 

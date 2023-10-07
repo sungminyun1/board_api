@@ -1,6 +1,7 @@
 package com.springBoard.controller;
 
 import com.springBoard.payload.ApiResponse;
+import com.springBoard.user.model.User;
 import com.springBoard.user.model.UserLoginForm;
 import com.springBoard.user.model.UserSaveForm;
 import com.springBoard.user.service.UserService;
@@ -28,20 +29,17 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<ApiResponse> signup(@RequestBody @Validated UserSaveForm userSaveForm, HttpServletRequest request){
-        ApiResponse apiResponse = userService.addUser(userSaveForm, request);
-        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+    public User signup(@RequestBody @Validated UserSaveForm userSaveForm, HttpServletRequest request){
+        return userService.addUser(userSaveForm, request);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse> login(@RequestBody @Validated UserLoginForm userLoginForm, HttpServletRequest request){
-        ApiResponse apiResponse = userService.login(userLoginForm, request);
-        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+    public void login(@RequestBody @Validated UserLoginForm userLoginForm, HttpServletRequest request){
+        userService.login(userLoginForm, request);
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<ApiResponse> logout(HttpServletRequest request){
-        ApiResponse apiResponse = userService.logout(request);
-        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+    public void logout(HttpServletRequest request){
+        userService.logout(request);
     }
 }

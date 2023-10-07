@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public ApiResponse addUser(UserSaveForm userSaveForm, HttpServletRequest request) {
+    public User addUser(UserSaveForm userSaveForm, HttpServletRequest request) {
         // userId 중복 검사
         UserSearchCond userDupCheck = new UserSearchCond();
         userDupCheck.setUserId(userSaveForm.getUserId());
@@ -46,12 +46,12 @@ public class UserServiceImpl implements UserService {
                 .password(userSaveForm.getPassword())
                 .build();
         userRepository.save(user);
-        return new ApiResponse(true, "회원 가입 완료");
+        return user;
     }
 
     @Override
     @Transactional
-    public ApiResponse login(UserLoginForm userLoginForm, HttpServletRequest request) {
+    public void login(UserLoginForm userLoginForm, HttpServletRequest request) {
         User loginUser = getLoginUser(userLoginForm);
 
         if(loginUser == null){
@@ -64,8 +64,6 @@ public class UserServiceImpl implements UserService {
 
         HttpSession session = request.getSession();
         session.setAttribute("user", loginUser);
-
-        return new ApiResponse(true, "로그인 성공");
     }
 
     public User getLoginUser(UserLoginForm userLoginForm){
@@ -78,12 +76,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ApiResponse logout(HttpServletRequest request) {
+    public void logout(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if (session != null) {
             session.invalidate();
         }
-
-        return new ApiResponse(true, "로그아웃 성공");
     }
 }

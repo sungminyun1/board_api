@@ -2,6 +2,7 @@ package com.springBoard.user.service.impl;
 
 import com.springBoard.exception.BadRequestException;
 import com.springBoard.payload.ApiResponse;
+import com.springBoard.user.model.User;
 import com.springBoard.user.model.UserSaveForm;
 import com.springBoard.user.service.UserService;
 import org.junit.jupiter.api.Assertions;
@@ -32,8 +33,8 @@ class UserServiceImplTest {
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         mockRequest.addHeader("X-FORWARDED-FOR","127.0.0.1");
 
-        ApiResponse apiResponse = userService.addUser(userSaveForm,mockRequest);
-        assertThat(apiResponse.getSuccess()).isTrue();
+        User user = userService.addUser(userSaveForm,mockRequest);
+        assertThat(user.getUserId()).isEqualTo("userId");
 
     }
 
@@ -47,7 +48,7 @@ class UserServiceImplTest {
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         mockRequest.addHeader("X-FORWARDED-FOR","127.0.0.1");
 
-        ApiResponse apiResponse = userService.addUser(userSaveForm,mockRequest);
+        User user =  userService.addUser(userSaveForm,mockRequest);
         Assertions.assertThrows(BadRequestException.class, ()->{
             userService.addUser(userSaveForm,mockRequest);
         });

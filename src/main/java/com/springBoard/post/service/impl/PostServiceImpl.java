@@ -35,7 +35,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public ApiResponse getPostList(String boardUrl, Integer limit, Integer offset) {
+    public List<Post> getPostList(String boardUrl, Integer limit, Integer offset) {
         Board board = Board.boardUrlMap.get("/" + boardUrl);
 
         PostSearchCond postSearchCond = new PostSearchCond.Builder()
@@ -44,12 +44,12 @@ public class PostServiceImpl implements PostService {
                 .offset(offset)
                 .build();
 
-        List<Post> postList = postRepository.findList(postSearchCond);
-        return new ApiResponseWithData<Post>(true,"게시물 조회 성공", postList);
+        return postRepository.findList(postSearchCond);
+//        return new ApiResponseWithData<Post>(true,"게시물 조회 성공", postList);
     }
 
     @Override
-    public ApiResponse writePost(String boardUrl, PostWriteForm postWriteForm, HttpServletRequest request) {
+    public Post writePost(String boardUrl, PostWriteForm postWriteForm, HttpServletRequest request) {
         Board board = Board.boardUrlMap.get("/" + boardUrl);
 
         User sessionUser = (User)request.getSession().getAttribute("user");
@@ -66,11 +66,12 @@ public class PostServiceImpl implements PostService {
                 .build();
 
         postRepository.save(post);
-        return new ApiResponseWithData<Post>(true,"게시물 작성 성공",post);
+        return post;
+//        return new ApiResponseWithData<Post>(true,"게시물 작성 성공",post);
     }
 
     @Override
-    public ApiResponse updatePost(String boardUrl, String postRid, PostWriteForm postWriteForm, HttpServletRequest request) {
+    public Post updatePost(String boardUrl, String postRid, PostWriteForm postWriteForm, HttpServletRequest request) {
         Board board = Board.boardUrlMap.get("/" + boardUrl);
 
         User sessionUser = (User)request.getSession().getAttribute("user");
@@ -93,11 +94,11 @@ public class PostServiceImpl implements PostService {
 
         postRepository.updateById(targetPost.get());
 
-        return new ApiResponseWithData<Post>(true,"게시물 수정 성공",targetPost.get());
+        return targetPost.get();
     }
 
     @Override
-    public ApiResponse deletePost(String boardUrl, String postRid, HttpServletRequest request) {
+    public void deletePost(String boardUrl, String postRid, HttpServletRequest request) {
         Board board = Board.boardUrlMap.get("/" + boardUrl);
 
         User sessionUser = (User)request.getSession().getAttribute("user");
@@ -115,6 +116,5 @@ public class PostServiceImpl implements PostService {
         }
         
         postRepository.deleteById(targetPost.get().getId());
-        return new ApiResponse(true, "게시글 삭제 성공");
     }
 }
