@@ -37,4 +37,14 @@ public class MyBatisPostRepository implements PostRepository {
     public void deleteById(Long id) {
         postMapper.deleteById(id);
     }
+
+    @Override
+    public Integer checkUserPostView(Long userId, Long postId) {
+        return postMapper.checkUserPostView(userId, postId);
+    }
+
+    @Override
+    public void insertUserPostView(Long userId, Long postId) {
+        postMapper.insertUserPostView(userId, postId);
+    }
 }

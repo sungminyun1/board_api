@@ -34,4 +34,15 @@ class MyBatisPostRepositoryTest {
             log.info(p.toString());
         }
     }
+
+    @Test
+    public void post_view_test(){
+        Integer i = postRepository.checkUserPostView(2L, 1L);
+    }
+
+    @Test
+    public void post_view_생성(){
+        postRepository.insertUserPostView(1l, 2l);
+        Integer i = postRepository.checkUserPostView(1L, 2L);
+    }
 }

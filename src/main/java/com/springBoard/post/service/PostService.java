@@ -16,4 +16,6 @@ public interface PostService {
     Post updatePost(String boardUrl, String postRid, PostWriteForm postWriteForm, HttpServletRequest request);
 
     void deletePost(String boardUrl, String postRid, HttpServletRequest request);
+
+    Post readPost(String boardUrl, String postRid, HttpServletRequest request);
 }

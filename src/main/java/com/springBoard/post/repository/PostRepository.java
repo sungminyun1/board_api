@@ -17,4 +17,8 @@ public interface PostRepository {
     void updateById(Post post);
 
     void deleteById(Long id);
+
+    Integer checkUserPostView(Long userId, Long postId);
+
+    void insertUserPostView(Long userId, Long postId);
 }

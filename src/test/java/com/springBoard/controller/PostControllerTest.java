@@ -199,6 +199,37 @@ class PostControllerTest {
                 .andExpect(status().isOk());
     }
 
+    @Test
+    public void 게시글_조회_테스트() throws Exception{
+        String writeContent = objectMapper.writeValueAsString(
+                new PostWriteForm("테스트 제목", "테스트 내용")
+        );
+        MvcResult mvcResult = mockMvc.perform(post("/board/notUserOnly/post")
+//                        .session(generateUserSession())
+                        .content(writeContent)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+
+        ApiResponse resData = objectMapper.readValue(
+                mvcResult.getResponse().getContentAsString(), new TypeReference<ApiResponse>() {
+                });
+        Post oriData = genPostFromHashMap((HashMap<Object, Object>) resData.getData());
+        String rid = oriData.getRid();
+
+        mockMvc.perform(get("/board/notUserOnly/post/" + rid)
+//                        .session(generateUserSession())
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/board/notUserOnly/post/" + rid)
+//                        .session(generateUserSession())
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
 
     public MockHttpSession generateUserSession() throws Exception{
         MockHttpSession session = new MockHttpSession();

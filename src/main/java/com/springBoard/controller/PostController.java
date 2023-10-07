@@ -61,4 +61,13 @@ public class PostController {
     ){
         postService.deletePost(boardUrl, postRid, request);
     }
+
+    @GetMapping("/{boardUrl}/post/{postRid}")
+    public Post readPost(
+            @PathVariable String boardUrl,
+            @PathVariable String postRid,
+            HttpServletRequest request
+    ){
+        return postService.readPost(boardUrl, postRid, request);
+    }
 }

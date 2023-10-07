@@ -19,4 +19,8 @@ public interface PostMapper {
     void updateById(Post post);
 
     void deleteById(@Param("id") Long id);
+
+    Integer checkUserPostView(@Param("userId") Long userId, @Param("postId") Long postId);
+
+    void insertUserPostView(@Param("userId") Long userId, @Param("postId") Long postId);
 }

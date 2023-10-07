@@ -115,4 +115,26 @@ public class PostServiceImpl implements PostService {
         
         postRepository.deleteById(targetPost.get().getId());
     }
+
+    @Override
+    public Post readPost(String boardUrl, String postRid, HttpServletRequest request) {
+
+        User sessionUser = (User)request.getSession().getAttribute("user");
+
+        PostSearchCond postSearchCond = new PostSearchCond.Builder().rid(postRid).build();
+        Optional<Post> targetPostOp = postRepository.find(postSearchCond);
+        if(targetPostOp.isEmpty()){
+            ApiResponse apiResponse = new ApiResponse(ResponseStatus.POST_NOT_EXIST);
+            throw new BadRequestException(apiResponse);
+        }
+        Post targetPost = targetPostOp.get();
+        Integer userPostReadCount = postRepository.checkUserPostView(sessionUser.getId(), targetPost.getId());
+        if(userPostReadCount == 0){
+            postRepository.insertUserPostView(sessionUser.getId(), targetPost.getId());
+            targetPost.setReadCount(targetPost.getReadCount() +1);
+            postRepository.updateById(targetPost);
+        }
+
+        return targetPost;
+    }
 }

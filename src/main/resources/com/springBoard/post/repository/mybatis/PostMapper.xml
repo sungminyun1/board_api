@@ -41,4 +41,13 @@
         delete from post where id = #{id}
     </delete>
 
+    <select id="checkUserPostView" resultType="Integer">
+        SELECT count(*) FROM spring_board.post_view where user_id = #{userId} and post_id = #{postId}
+    </select>
+
+    <insert id="insertUserPostView">
+        insert into spring_board.post_view (user_id, post_id)
+        values (#{userId}, #{postId})
+    </insert>
+
 </mapper>
