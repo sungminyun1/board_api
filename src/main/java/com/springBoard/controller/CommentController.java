@@ -1,12 +1,15 @@
 package com.springBoard.controller;
 
 import com.springBoard.comment.model.Comment;
+import com.springBoard.comment.model.CommentWriteForm;
 import com.springBoard.comment.service.CommentService;
 import com.springBoard.post.service.PostCommentCompositeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -30,5 +33,17 @@ public class CommentController {
             @RequestParam(required = false, defaultValue = "0") Integer offset
     ){
         return postCommentCompositeService.getCommentList(postRid, limit, offset);
+    }
+
+    @PostMapping("")
+    public Comment writeComment(
+            @PathVariable String boardUrl,
+            @PathVariable String postRid,
+            @RequestBody @Validated CommentWriteForm commentWriteForm,
+            HttpServletRequest request
+            ){
+
+        log.info("here i am 111 {}", commentWriteForm);
+        return postCommentCompositeService.writeComment(postRid, commentWriteForm, request);
     }
 }

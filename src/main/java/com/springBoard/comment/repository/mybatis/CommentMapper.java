@@ -9,4 +9,6 @@ import java.util.List;
 @Mapper
 public interface CommentMapper {
     List<Comment> findList(@Param("postId") Long postId, @Param("limit") Integer limit, @Param("offset") Integer offset);
+
+    void save(Comment comment);
 }

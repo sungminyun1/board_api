@@ -9,5 +9,9 @@
         limit #{limit} offset #{offset}
     </select>
 
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+        insert into comment (rid, post_id, user_id, c_time, text)
+        values (#{rid}, #{postId}, #{userId}, #{cDate}, #{text})
+    </insert>
 
 </mapper>

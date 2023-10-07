@@ -1,5 +1,7 @@
 package com.springBoard.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.springBoard.comment.model.CommentWriteForm;
 import com.springBoard.user.model.User;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -7,12 +9,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -25,6 +29,9 @@ class CommentControllerTest {
 
     @Autowired
     MockMvc mockMvc;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Test
     public void 댓글_목록_조회() throws Exception {
@@ -44,6 +51,21 @@ class CommentControllerTest {
                         .session(generateUserSession()))
                 .andDo(print())
                 .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void 댓글_작성() throws Exception{
+        String writeContent = objectMapper.writeValueAsString(
+                new CommentWriteForm("테스트 댓글")
+        );
+        log.info("here i am writeContent {}", writeContent);
+
+        mockMvc.perform(post("/board/userOnly/post/test/comment")
+                        .session(generateUserSession())
+                        .content(writeContent)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andDo(print())
+                .andExpect(status().isOk());
     }
 
     public MockHttpSession generateUserSession() throws Exception{
