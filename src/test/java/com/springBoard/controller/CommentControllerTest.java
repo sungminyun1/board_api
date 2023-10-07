@@ -1,0 +1,62 @@
+package com.springBoard.controller;
+
+import com.springBoard.user.model.User;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockHttpSession;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@SpringBootTest
+@AutoConfigureMockMvc
+@Transactional
+class CommentControllerTest {
+
+    private final Logger log = LoggerFactory.getLogger(this.getClass().getSimpleName());
+
+    @Autowired
+    MockMvc mockMvc;
+
+    @Test
+    public void 댓글_목록_조회() throws Exception {
+        mockMvc.perform(get("/board/userOnly/post/test/comment")
+                        .param("limit","10")
+                        .param("offset","0")
+                        .session(generateUserSession()))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void 댓글_목록_조회_실패() throws Exception {
+        mockMvc.perform(get("/board/userOnly/post/test33/comment")
+                        .param("limit","10")
+                        .param("offset","0")
+                        .session(generateUserSession()))
+                .andDo(print())
+                .andExpect(status().is4xxClientError());
+    }
+
+    public MockHttpSession generateUserSession() throws Exception{
+        MockHttpSession session = new MockHttpSession();
+        User user = new User.Builder()
+                .id(1L)
+                .userName("test")
+                .password("testPass")
+                .userId("testUserId")
+                .hostIp("123.456.789")
+                .isUser(1)
+                .build();
+        session.setAttribute("user",user);
+        return session;
+    }
+}

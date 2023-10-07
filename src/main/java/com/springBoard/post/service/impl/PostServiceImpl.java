@@ -47,6 +47,7 @@ public class PostServiceImpl implements PostService {
         return postRepository.findList(postSearchCond);
     }
 
+
     @Override
     public Post writePost(String boardUrl, PostWriteForm postWriteForm, HttpServletRequest request) {
         Board board = Board.boardUrlMap.get("/" + boardUrl);
@@ -137,4 +138,16 @@ public class PostServiceImpl implements PostService {
 
         return targetPost;
     }
+
+    @Override
+    public Post getPostByRid(String rid) {
+        PostSearchCond postSearchCond = new PostSearchCond.Builder().rid(rid).build();
+        Optional<Post> targetPostOp = postRepository.find(postSearchCond);
+        if(targetPostOp.isEmpty()){
+            ApiResponse apiResponse = new ApiResponse(ResponseStatus.POST_NOT_EXIST);
+            throw new BadRequestException(apiResponse);
+        }
+        return targetPostOp.get();
+    }
+
 }

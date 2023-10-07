@@ -11,6 +11,8 @@ import java.util.List;
 public interface PostService {
     List<Post> getPostList(String boardUrl, Integer limit, Integer offset);
 
+    Post getPostByRid(String rid);
+
     Post writePost(String boardUrl, PostWriteForm postWriteForm, HttpServletRequest request);
 
     Post updatePost(String boardUrl, String postRid, PostWriteForm postWriteForm, HttpServletRequest request);
