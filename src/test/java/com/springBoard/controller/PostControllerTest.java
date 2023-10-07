@@ -2,7 +2,7 @@ package com.springBoard.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.springBoard.payload.ApiResponseWithData;
+import com.springBoard.payload.ApiResponse;
 import com.springBoard.post.model.Post;
 import com.springBoard.post.model.PostWriteForm;
 import com.springBoard.user.model.User;
@@ -19,6 +19,8 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpSession;
+
+import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -138,11 +140,11 @@ class PostControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        ApiResponseWithData<Post> resData = objectMapper.readValue(
-                mvcResult.getResponse().getContentAsString(), new TypeReference<ApiResponseWithData<Post>>() {
+        ApiResponse resData = objectMapper.readValue(
+                mvcResult.getResponse().getContentAsString(), new TypeReference<ApiResponse>() {
                 });
 
-        Post oriData = resData.getData();
+        Post oriData = genPostFromHashMap((HashMap<Object, Object>) resData.getData());
         String rid = oriData.getRid();
         String writeContent2 = objectMapper.writeValueAsString(
                 new PostWriteForm("테스트 제목 수정", "테스트 내용 수정")
@@ -184,11 +186,10 @@ class PostControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        ApiResponseWithData<Post> resData = objectMapper.readValue(
-                mvcResult.getResponse().getContentAsString(), new TypeReference<ApiResponseWithData<Post>>() {
+        ApiResponse resData = objectMapper.readValue(
+                mvcResult.getResponse().getContentAsString(), new TypeReference<ApiResponse>() {
                 });
-
-        Post oriData = resData.getData();
+        Post oriData = genPostFromHashMap((HashMap<Object, Object>) resData.getData());
         String rid = oriData.getRid();
 
         mockMvc.perform(delete("/board/notUserOnly/post/" + rid)
@@ -226,5 +227,10 @@ class PostControllerTest {
         return session;
     }
 
-
+    public Post genPostFromHashMap(HashMap<Object, Object> hm){
+        return new Post.Builder()
+                .id(new Long((Integer) hm.get("id")))
+                .rid((String)hm.get("rid"))
+                .build();
+    }
 }

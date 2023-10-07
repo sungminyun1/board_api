@@ -2,7 +2,6 @@ package com.springBoard.config;
 
 import com.springBoard.exception.ControllerExceptionHandler;
 import com.springBoard.payload.ApiResponse;
-import com.springBoard.payload.ApiResponseWithData;
 import com.springBoard.post.model.Post;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,9 +35,6 @@ public class ResponseAdvisor implements ResponseBodyAdvice<Object> {
 
     @Override
     public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType, Class selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
-        if(body == null){
-            return new ApiResponse(true, "test");
-        }
-        return new ApiResponseWithData<>(true, "test", body);
+        return new ApiResponse(true, "test", body);
     }
 }

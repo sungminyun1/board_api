@@ -4,7 +4,6 @@ import com.springBoard.board.model.Board;
 import com.springBoard.exception.AccessDeniedException;
 import com.springBoard.exception.BadRequestException;
 import com.springBoard.payload.ApiResponse;
-import com.springBoard.payload.ApiResponseWithData;
 import com.springBoard.post.model.Post;
 import com.springBoard.post.model.PostPermission;
 import com.springBoard.post.model.PostSearchCond;

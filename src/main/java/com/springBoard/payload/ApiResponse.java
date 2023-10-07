@@ -22,12 +22,22 @@ public class ApiResponse implements Serializable {
     @JsonProperty("resMsg")
     private String resMsg;
 
+    @JsonProperty("data")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Object data;
+
     public ApiResponse() {
     }
 
     public ApiResponse(Boolean success, String resMsg) {
         this.success = success;
         this.resMsg = resMsg;
+    }
+
+    public ApiResponse(Boolean success, String resMsg, Object data) {
+        this.success = success;
+        this.resMsg = resMsg;
+        this.data = data;
     }
 
     public Boolean getSuccess() {
@@ -46,4 +56,11 @@ public class ApiResponse implements Serializable {
         this.resMsg = resMsg;
     }
 
+    public Object getData() {
+        return data;
+    }
+
+    public void setData(Object data) {
+        this.data = data;
+    }
 }
