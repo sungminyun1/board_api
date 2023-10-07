@@ -1,5 +1,6 @@
 package com.springBoard.user.service.impl;
 
+import com.springBoard.constant.ResponseStatus;
 import com.springBoard.exception.BadRequestException;
 import com.springBoard.payload.ApiResponse;
 import com.springBoard.user.model.*;
@@ -35,7 +36,7 @@ public class UserServiceImpl implements UserService {
         userDupCheck.setUserId(userSaveForm.getUserId());
         Optional<User> dupUser = userRepository.find(userDupCheck);
         if (dupUser.isPresent()) {
-            ApiResponse apiResponse = new ApiResponse(false, "중복된 userId가 존재 합니다.");
+            ApiResponse apiResponse = new ApiResponse(ResponseStatus.MEMBER_ID_DUPLICATED);
             throw new BadRequestException(apiResponse);
         }
         User user = new User.Builder()
@@ -55,7 +56,7 @@ public class UserServiceImpl implements UserService {
         User loginUser = getLoginUser(userLoginForm);
 
         if(loginUser == null){
-            ApiResponse apiResponse = new ApiResponse(false,"아이디 또는 비밀번호가 맞지 않습니다.");
+            ApiResponse apiResponse = new ApiResponse(ResponseStatus.MEMBER_ID_PW_MISMATCH);
             throw new BadRequestException(apiResponse);
         }
 

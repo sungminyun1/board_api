@@ -1,6 +1,7 @@
 package com.springBoard.post.service.impl;
 
 import com.springBoard.board.model.Board;
+import com.springBoard.constant.ResponseStatus;
 import com.springBoard.exception.AccessDeniedException;
 import com.springBoard.exception.BadRequestException;
 import com.springBoard.payload.ApiResponse;
@@ -44,7 +45,6 @@ public class PostServiceImpl implements PostService {
                 .build();
 
         return postRepository.findList(postSearchCond);
-//        return new ApiResponseWithData<Post>(true,"게시물 조회 성공", postList);
     }
 
     @Override
@@ -66,7 +66,6 @@ public class PostServiceImpl implements PostService {
 
         postRepository.save(post);
         return post;
-//        return new ApiResponseWithData<Post>(true,"게시물 작성 성공",post);
     }
 
     @Override
@@ -78,12 +77,12 @@ public class PostServiceImpl implements PostService {
         PostSearchCond postSearchCond = new PostSearchCond.Builder().rid(postRid).build();
         Optional<Post> targetPost = postRepository.find(postSearchCond);
         if(targetPost.isEmpty()){
-            ApiResponse apiResponse = new ApiResponse(false, "존재하지 않는 게시글입니다.");
+            ApiResponse apiResponse = new ApiResponse(ResponseStatus.POST_NOT_EXIST);
             throw new BadRequestException(apiResponse);
         }
 
         if(!targetPost.get().getUserId().equals(sessionUser.getId())){
-            ApiResponse apiResponse = new ApiResponse(false, "수정 권한이 없습니다.");
+            ApiResponse apiResponse = new ApiResponse(ResponseStatus.MEMBER_ACCESS_DENIED);
             throw new AccessDeniedException(apiResponse);
         }
 
@@ -105,12 +104,12 @@ public class PostServiceImpl implements PostService {
         PostSearchCond postSearchCond = new PostSearchCond.Builder().rid(postRid).build();
         Optional<Post> targetPost = postRepository.find(postSearchCond);
         if(targetPost.isEmpty()){
-            ApiResponse apiResponse = new ApiResponse(false, "존재하지 않는 게시글입니다.");
+            ApiResponse apiResponse = new ApiResponse(ResponseStatus.POST_NOT_EXIST);
             throw new BadRequestException(apiResponse);
         }
 
         if(!targetPost.get().getUserId().equals(sessionUser.getId())){
-            ApiResponse apiResponse = new ApiResponse(false, "삭제 권한이 없습니다.");
+            ApiResponse apiResponse = new ApiResponse(ResponseStatus.MEMBER_ACCESS_DENIED);
             throw new AccessDeniedException(apiResponse);
         }
         

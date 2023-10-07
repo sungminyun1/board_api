@@ -1,6 +1,7 @@
 package com.springBoard.interceptor;
 
 import com.springBoard.board.model.Board;
+import com.springBoard.constant.ResponseStatus;
 import com.springBoard.exception.AccessDeniedException;
 import com.springBoard.exception.BadRequestException;
 import com.springBoard.payload.ApiResponse;
@@ -36,7 +37,7 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
         String boardUrl = request.getRequestURI().split("/")[2];
         Board board = Board.boardUrlMap.get("/" + boardUrl);
         if(board == null){
-            ApiResponse apiResponse = new ApiResponse(false, "존재하지 않는 boardurl입니다. " + boardUrl);
+            ApiResponse apiResponse = new ApiResponse(ResponseStatus.BOARD_URL_NOT_EXIST);
             throw new BadRequestException(apiResponse);
         }
 
@@ -45,12 +46,12 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
         // 정식 유저만 접근 가능
         if(board.getPermission().equals(PostPermission.USER)){
             if(session == null || session.getAttribute("user") == null ){
-                ApiResponse apiResponse = new ApiResponse(false, "허가되지 않은 접근입니다.");
+                ApiResponse apiResponse = new ApiResponse(ResponseStatus.BOARD_ACCESS_DENIED);
                 throw new AccessDeniedException(apiResponse);
             }
             User sessionUser = (User)session.getAttribute("user");
             if(sessionUser.getisUser() != 1){
-                ApiResponse apiResponse = new ApiResponse(false, "허가되지 않은 접근입니다.");
+                ApiResponse apiResponse = new ApiResponse(ResponseStatus.BOARD_ACCESS_DENIED);
                 throw new AccessDeniedException(apiResponse);
             }
             return true;

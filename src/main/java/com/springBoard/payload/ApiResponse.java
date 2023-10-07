@@ -4,12 +4,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.springBoard.constant.ResponseStatus;
 
 import java.io.Serializable;
 import java.util.List;
 
 @JsonPropertyOrder({
         "success",
+        "code",
         "resMsg"
 })
 public class ApiResponse implements Serializable {
@@ -18,6 +20,9 @@ public class ApiResponse implements Serializable {
 
     @JsonProperty("success")
     private Boolean success;
+
+    @JsonProperty("code")
+    private int code;
 
     @JsonProperty("resMsg")
     private String resMsg;
@@ -29,38 +34,44 @@ public class ApiResponse implements Serializable {
     public ApiResponse() {
     }
 
-    public ApiResponse(Boolean success, String resMsg) {
-        this.success = success;
-        this.resMsg = resMsg;
+    public ApiResponse(ResponseStatus status){
+        this.success = status.isSuccess();
+        this.resMsg = status.getMessage();
+        this.code = status.getCode();
     }
 
-    public ApiResponse(Boolean success, String resMsg, Object data) {
-        this.success = success;
-        this.resMsg = resMsg;
+    public ApiResponse(Object data){
+        this.success = ResponseStatus.SUCCESS.isSuccess();
+        this.resMsg = ResponseStatus.SUCCESS.getMessage();
+        this.code = ResponseStatus.SUCCESS.getCode();
         this.data = data;
     }
+
+//    public ApiResponse(Boolean success, String resMsg) {
+//        this.success = success;
+//        this.resMsg = resMsg;
+//    }
+//
+//    public ApiResponse(Boolean success, String resMsg, Object data) {
+//        this.success = success;
+//        this.resMsg = resMsg;
+//        this.data = data;
+//    }
+
 
     public Boolean getSuccess() {
         return success;
     }
 
-    public void setSuccess(Boolean success) {
-        this.success = success;
+    public int getCode() {
+        return code;
     }
 
     public String getResMsg() {
         return resMsg;
     }
 
-    public void setResMsg(String resMsg) {
-        this.resMsg = resMsg;
-    }
-
     public Object getData() {
         return data;
-    }
-
-    public void setData(Object data) {
-        this.data = data;
     }
 }

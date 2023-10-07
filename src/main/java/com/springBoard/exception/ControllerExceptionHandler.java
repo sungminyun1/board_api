@@ -1,5 +1,6 @@
 package com.springBoard.exception;
 
+import com.springBoard.constant.ResponseStatus;
 import com.springBoard.payload.ApiResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +51,7 @@ public class ControllerExceptionHandler {
             eMsg.append(filed.getField() + " - " + filed.getDefaultMessage() + " / ");
         }
 
-        ApiResponse apiResponse = new ApiResponse(false, eMsg.toString());
+        ApiResponse apiResponse = new ApiResponse(ResponseStatus.METHOD_ARGUMENT_NOT_VALID);
         return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
     }
 }

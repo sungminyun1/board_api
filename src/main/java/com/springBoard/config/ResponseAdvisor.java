@@ -35,6 +35,6 @@ public class ResponseAdvisor implements ResponseBodyAdvice<Object> {
 
     @Override
     public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType, Class selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
-        return new ApiResponse(true, "test", body);
+        return new ApiResponse(body);
     }
 }
