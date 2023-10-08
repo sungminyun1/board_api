@@ -25,7 +25,16 @@ public class MybatisCommentRepository implements CommentRepository {
 
     @Override
     public void save(Comment comment) {
-        log.info("here i am comment repo {}", comment);
         commentMapper.save(comment);
+    }
+
+    @Override
+    public Comment findByRid(String rid) {
+        return commentMapper.findByRid(rid).orElse(null);
+    }
+
+    @Override
+    public void updateById(Comment comment) {
+        commentMapper.updateById(comment);
     }
 }

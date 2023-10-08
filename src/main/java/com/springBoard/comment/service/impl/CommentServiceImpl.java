@@ -4,6 +4,10 @@ import com.springBoard.comment.model.Comment;
 import com.springBoard.comment.model.CommentWriteForm;
 import com.springBoard.comment.repository.CommentRepository;
 import com.springBoard.comment.service.CommentService;
+import com.springBoard.constant.ResponseStatus;
+import com.springBoard.exception.AccessDeniedException;
+import com.springBoard.exception.BadRequestException;
+import com.springBoard.payload.ApiResponse;
 import com.springBoard.user.model.User;
 import com.springBoard.util.Util;
 import org.slf4j.Logger;
@@ -44,6 +48,29 @@ public class CommentServiceImpl implements CommentService {
                 .build();
 
         commentRepository.save(comment);
+        return comment;
+    }
+
+    @Override
+    public Comment updateComment(String commentRid, CommentWriteForm commentWriteForm, HttpServletRequest request) {
+        User sessionUser = (User)request.getSession().getAttribute("user");
+
+        Comment comment = commentRepository.findByRid(commentRid);
+        if(comment == null){
+            ApiResponse apiResponse = new ApiResponse(ResponseStatus.COMMENT_NOT_EXIST);
+            throw new BadRequestException(apiResponse);
+        }
+
+        if(comment.getUserId() != sessionUser.getId()){
+            ApiResponse apiResponse = new ApiResponse(ResponseStatus.MEMBER_ACCESS_DENIED);
+            throw new AccessDeniedException(apiResponse);
+        }
+
+        comment.setText(commentWriteForm.getContent());
+        comment.setuDate(new Date());
+
+        commentRepository.updateById(comment);
+
         return comment;
     }
 }

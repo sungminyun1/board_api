@@ -51,6 +51,14 @@ public class Comment implements Serializable {
         return text;
     }
 
+    public void setuDate(Date uDate) {
+        this.uDate = uDate;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
     @Override
     public String toString() {
         return "Comment{" +

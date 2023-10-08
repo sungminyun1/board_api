@@ -43,7 +43,15 @@ public class CommentController {
             HttpServletRequest request
             ){
 
-        log.info("here i am 111 {}", commentWriteForm);
         return postCommentCompositeService.writeComment(postRid, commentWriteForm, request);
+    }
+
+    @PutMapping("/{commentRid}")
+    public Comment updateComment(
+            @PathVariable String commentRid,
+            @RequestBody @Validated CommentWriteForm commentWriteForm,
+            HttpServletRequest request
+    ){
+        return commentService.updateComment(commentRid, commentWriteForm, request);
     }
 }

@@ -13,7 +13,9 @@ public enum ResponseStatus {
 
     BOARD_URL_NOT_EXIST(false, 1005, "BOARD_URL_NOT_EXIST"),
 
-    METHOD_ARGUMENT_NOT_VALID(false, 1006, "METHOD_ARGUMENT_NOT_VALID");
+    METHOD_ARGUMENT_NOT_VALID(false, 1006, "METHOD_ARGUMENT_NOT_VALID"),
+
+    COMMENT_NOT_EXIST(false, 1007, "COMMENT_NOT_EXIST");
 
 
     private final boolean isSuccess;

@@ -14,4 +14,16 @@
         values (#{rid}, #{postId}, #{userId}, #{cDate}, #{text})
     </insert>
 
+    <select id="findByRid" resultType="com.springBoard.comment.model.Comment">
+        select * from comment
+        where rid = #{rid}
+    </select>
+
+    <update id="updateById">
+        update comment
+        set u_time = #{uDate},
+            text = #{text}
+        where id = #{id}
+    </update>
+
 </mapper>

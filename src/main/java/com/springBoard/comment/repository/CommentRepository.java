@@ -8,4 +8,8 @@ public interface CommentRepository {
     List<Comment> findList(Long postId, Integer limit, Integer offset);
 
     void save(Comment comment);
+
+    Comment findByRid(String rid);
+
+    void updateById(Comment comment);
 }
