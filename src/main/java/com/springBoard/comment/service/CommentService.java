@@ -12,4 +12,6 @@ public interface CommentService {
     Comment writeComment(Long postId, CommentWriteForm commentWriteForm, HttpServletRequest request);
 
     Comment updateComment(String commentRid, CommentWriteForm commentWriteForm, HttpServletRequest request);
+
+    void deleteComment(String commentRid, HttpServletRequest request);
 }

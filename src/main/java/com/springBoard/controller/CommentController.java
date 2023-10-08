@@ -54,4 +54,12 @@ public class CommentController {
     ){
         return commentService.updateComment(commentRid, commentWriteForm, request);
     }
+
+    @DeleteMapping("/{commentRid}")
+    public void deleteComment(
+            @PathVariable String commentRid,
+            HttpServletRequest request
+    ){
+        commentService.deleteComment(commentRid,request);
+    }
 }

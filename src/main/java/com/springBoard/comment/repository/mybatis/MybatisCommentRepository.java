@@ -37,4 +37,9 @@ public class MybatisCommentRepository implements CommentRepository {
     public void updateById(Comment comment) {
         commentMapper.updateById(comment);
     }
+
+    @Override
+    public void deleteById(Long id) {
+        commentMapper.deleteById(id);
+    }
 }

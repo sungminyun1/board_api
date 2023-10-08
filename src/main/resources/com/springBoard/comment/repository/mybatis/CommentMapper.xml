@@ -26,4 +26,8 @@
         where id = #{id}
     </update>
 
+    <delete id="deleteById">
+        delete from comment where id = #{id}
+    </delete>
+
 </mapper>

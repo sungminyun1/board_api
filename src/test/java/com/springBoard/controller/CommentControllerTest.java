@@ -106,6 +106,34 @@ class CommentControllerTest {
                 .andExpect(status().isOk());
     }
 
+    @Test
+    public void 댓글_삭제() throws  Exception{
+        String writeContent = objectMapper.writeValueAsString(
+                new CommentWriteForm("테스트 댓글")
+        );
+
+        MvcResult mvcResult = mockMvc.perform(post("/board/userOnly/post/test/comment")
+                        .session(generateUserSession())
+                        .content(writeContent)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+
+        ApiResponse resData = objectMapper.readValue(
+                mvcResult.getResponse().getContentAsString(), new TypeReference<ApiResponse>() {
+                });
+
+        Comment oriData = genCommentFromHashMap((HashMap<Object, Object>) resData.getData());
+        String rid = oriData.getRid();
+
+        mockMvc.perform(delete("/board/userOnly/post/test/comment/" + rid)
+                        .session(generateUserSession())
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
     public Comment genCommentFromHashMap(HashMap<Object, Object> hm){
         return new Comment.Builder()
                 .id(new Long((Integer) hm.get("id")))

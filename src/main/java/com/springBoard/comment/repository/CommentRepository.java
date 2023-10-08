@@ -12,4 +12,6 @@ public interface CommentRepository {
     Comment findByRid(String rid);
 
     void updateById(Comment comment);
+
+    void deleteById(Long id);
 }

@@ -73,4 +73,22 @@ public class CommentServiceImpl implements CommentService {
 
         return comment;
     }
+
+    @Override
+    public void deleteComment(String commentRid, HttpServletRequest request) {
+        User sessionUser = (User)request.getSession().getAttribute("user");
+
+        Comment comment = commentRepository.findByRid(commentRid);
+        if(comment == null){
+            ApiResponse apiResponse = new ApiResponse(ResponseStatus.COMMENT_NOT_EXIST);
+            throw new BadRequestException(apiResponse);
+        }
+
+        if(comment.getUserId() != sessionUser.getId()){
+            ApiResponse apiResponse = new ApiResponse(ResponseStatus.MEMBER_ACCESS_DENIED);
+            throw new AccessDeniedException(apiResponse);
+        }
+
+        commentRepository.deleteById(comment.getId());
+    }
 }

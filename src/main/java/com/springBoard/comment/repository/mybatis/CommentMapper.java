@@ -16,4 +16,6 @@ public interface CommentMapper {
     Optional<Comment> findByRid(String rid);
 
     void updateById(Comment comment);
+
+    void deleteById(@Param("id") Long id);
 }
