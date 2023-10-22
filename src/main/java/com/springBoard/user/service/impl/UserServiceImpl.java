@@ -6,6 +6,7 @@ import com.springBoard.payload.ApiResponse;
 import com.springBoard.user.model.*;
 import com.springBoard.user.repository.UserRepository;
 import com.springBoard.user.service.UserService;
+import com.springBoard.util.TokenManager;
 import com.springBoard.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +53,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void login(UserLoginForm userLoginForm, HttpServletRequest request) {
+    public TokenData login(UserLoginForm userLoginForm, HttpServletRequest request) {
         User loginUser = getLoginUser(userLoginForm);
 
         if(loginUser == null){
@@ -63,8 +64,8 @@ public class UserServiceImpl implements UserService {
         loginUser.setLastLogin(new Date());
         userRepository.updateById(loginUser);
 
-        HttpSession session = request.getSession();
-        session.setAttribute("user", loginUser);
+        String token = TokenManager.createToken(loginUser);
+        return new TokenData(token);
     }
 
     public User getLoginUser(UserLoginForm userLoginForm){
@@ -78,9 +79,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void logout(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        if (session != null) {
-            session.invalidate();
-        }
+//        HttpSession session = request.getSession(false);
+//        if (session != null) {
+//            session.invalidate();
+//        }
     }
 }

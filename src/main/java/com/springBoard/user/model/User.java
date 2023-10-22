@@ -106,6 +106,21 @@ public class User implements Serializable {
                 '}';
     }
 
+
+//    @Override
+//    public String toString() {
+//        return "{" +
+//                "\"id\" : \"" + id + "\"" +
+//                ", \"userId\" : \"" + userId + '\"' +
+//                ", \"password\" : \"" + password + '\"' +
+//                ", \"userName\" : \"" + userName + '\"' +
+//                ", \"cDate\" : \"" + cDate + '\"' +
+//                ", \"lastLogin\" : \"" + lastLogin + '\"' +
+//                ", \"hostIp\" : \"" + hostIp + '\"' +
+//                ", \"isUser\" : \"" + isUser + '\"' +
+//                '}';
+//    }
+
     static public class Builder {
         private Long id;
         private String userId;

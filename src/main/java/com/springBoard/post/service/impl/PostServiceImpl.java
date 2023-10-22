@@ -52,12 +52,13 @@ public class PostServiceImpl implements PostService {
     public Post writePost(String boardUrl, PostWriteForm postWriteForm, HttpServletRequest request) {
         Board board = Board.boardUrlMap.get("/" + boardUrl);
 
-        User sessionUser = (User)request.getSession().getAttribute("user");
+//        User sessionUser = (User)request.getSession().getAttribute("user");
+        User tokenUser = (User) request.getAttribute("tokenUser");
 
         Post post = new Post.Builder()
                 .rid(Util.generateRid())
                 .boardId(board.getId())
-                .userId(sessionUser.getId())
+                .userId(tokenUser.getId())
                 .commentCount(0L)
                 .readCount(0L)
                 .cDate(new Date())
@@ -73,7 +74,8 @@ public class PostServiceImpl implements PostService {
     public Post updatePost(String boardUrl, String postRid, PostWriteForm postWriteForm, HttpServletRequest request) {
         Board board = Board.boardUrlMap.get("/" + boardUrl);
 
-        User sessionUser = (User)request.getSession().getAttribute("user");
+//        User sessionUser = (User)request.getSession().getAttribute("user");
+        User tokenUser = (User) request.getAttribute("tokenUser");
 
         PostSearchCond postSearchCond = new PostSearchCond.Builder().rid(postRid).build();
         Optional<Post> targetPost = postRepository.find(postSearchCond);
@@ -82,7 +84,7 @@ public class PostServiceImpl implements PostService {
             throw new BadRequestException(apiResponse);
         }
 
-        if(!targetPost.get().getUserId().equals(sessionUser.getId())){
+        if(!targetPost.get().getUserId().equals(tokenUser.getId())){
             ApiResponse apiResponse = new ApiResponse(ResponseStatus.MEMBER_ACCESS_DENIED);
             throw new AccessDeniedException(apiResponse);
         }
@@ -100,7 +102,9 @@ public class PostServiceImpl implements PostService {
     public void deletePost(String boardUrl, String postRid, HttpServletRequest request) {
         Board board = Board.boardUrlMap.get("/" + boardUrl);
 
-        User sessionUser = (User)request.getSession().getAttribute("user");
+//        User sessionUser = (User)request.getSession().getAttribute("user");
+        User tokenUser = (User) request.getAttribute("tokenUser");
+
 
         PostSearchCond postSearchCond = new PostSearchCond.Builder().rid(postRid).build();
         Optional<Post> targetPost = postRepository.find(postSearchCond);
@@ -109,7 +113,7 @@ public class PostServiceImpl implements PostService {
             throw new BadRequestException(apiResponse);
         }
 
-        if(!targetPost.get().getUserId().equals(sessionUser.getId())){
+        if(!targetPost.get().getUserId().equals(tokenUser.getId())){
             ApiResponse apiResponse = new ApiResponse(ResponseStatus.MEMBER_ACCESS_DENIED);
             throw new AccessDeniedException(apiResponse);
         }
@@ -120,7 +124,8 @@ public class PostServiceImpl implements PostService {
     @Override
     public Post readPost(String boardUrl, String postRid, HttpServletRequest request) {
 
-        User sessionUser = (User)request.getSession().getAttribute("user");
+//        User sessionUser = (User)request.getSession().getAttribute("user");
+        User tokenUser = (User) request.getAttribute("tokenUser");
 
         PostSearchCond postSearchCond = new PostSearchCond.Builder().rid(postRid).build();
         Optional<Post> targetPostOp = postRepository.find(postSearchCond);
@@ -129,9 +134,9 @@ public class PostServiceImpl implements PostService {
             throw new BadRequestException(apiResponse);
         }
         Post targetPost = targetPostOp.get();
-        Integer userPostReadCount = postRepository.checkUserPostView(sessionUser.getId(), targetPost.getId());
+        Integer userPostReadCount = postRepository.checkUserPostView(tokenUser.getId(), targetPost.getId());
         if(userPostReadCount == 0){
-            postRepository.insertUserPostView(sessionUser.getId(), targetPost.getId());
+            postRepository.insertUserPostView(tokenUser.getId(), targetPost.getId());
             targetPost.setReadCount(targetPost.getReadCount() +1);
             postRepository.updateById(targetPost);
         }

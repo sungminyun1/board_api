@@ -1,5 +1,6 @@
 package com.springBoard.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.springBoard.board.repository.BoardRepository;
 import com.springBoard.interceptor.LoginCheckInterceptor;
 import com.springBoard.user.repository.UserRepository;
@@ -15,6 +16,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     @Bean
     public BoardUrlMapInit boardUrlMapInit(BoardRepository boardRepository){
         return new BoardUrlMapInit(boardRepository);
@@ -22,7 +26,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new LoginCheckInterceptor(userRepository))
+        registry.addInterceptor(new LoginCheckInterceptor(userRepository, objectMapper))
                 .addPathPatterns("/board/**");
     }
 }

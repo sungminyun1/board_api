@@ -37,12 +37,13 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public Comment writeComment(Long postId, CommentWriteForm commentWriteForm, HttpServletRequest request) {
-        User sessionUser = (User)request.getSession().getAttribute("user");
+//        User sessionUser = (User)request.getSession().getAttribute("user");
+        User tokenUser = (User) request.getAttribute("tokenUser");
 
         Comment comment = new Comment.Builder()
                 .rid(Util.generateRid())
                 .postId(postId)
-                .userId(sessionUser.getId())
+                .userId(tokenUser.getId())
                 .text(commentWriteForm.getContent())
                 .cDate(new Date())
                 .build();
@@ -53,15 +54,15 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public Comment updateComment(String commentRid, CommentWriteForm commentWriteForm, HttpServletRequest request) {
-        User sessionUser = (User)request.getSession().getAttribute("user");
-
+//        User sessionUser = (User)request.getSession().getAttribute("user");
+        User tokenUser = (User) request.getAttribute("tokenUser");
         Comment comment = commentRepository.findByRid(commentRid);
         if(comment == null){
             ApiResponse apiResponse = new ApiResponse(ResponseStatus.COMMENT_NOT_EXIST);
             throw new BadRequestException(apiResponse);
         }
 
-        if(comment.getUserId() != sessionUser.getId()){
+        if(comment.getUserId() != tokenUser.getId()){
             ApiResponse apiResponse = new ApiResponse(ResponseStatus.MEMBER_ACCESS_DENIED);
             throw new AccessDeniedException(apiResponse);
         }
@@ -76,7 +77,8 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public void deleteComment(String commentRid, HttpServletRequest request) {
-        User sessionUser = (User)request.getSession().getAttribute("user");
+//        User sessionUser = (User)request.getSession().getAttribute("user");
+        User tokenUser = (User) request.getAttribute("tokenUser");
 
         Comment comment = commentRepository.findByRid(commentRid);
         if(comment == null){
@@ -84,7 +86,7 @@ public class CommentServiceImpl implements CommentService {
             throw new BadRequestException(apiResponse);
         }
 
-        if(comment.getUserId() != sessionUser.getId()){
+        if(comment.getUserId() != tokenUser.getId()){
             ApiResponse apiResponse = new ApiResponse(ResponseStatus.MEMBER_ACCESS_DENIED);
             throw new AccessDeniedException(apiResponse);
         }

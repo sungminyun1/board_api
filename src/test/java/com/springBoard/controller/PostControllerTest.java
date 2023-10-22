@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
@@ -39,13 +40,16 @@ class PostControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    private static String testToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJpZFwiOjE0MixcInVzZXJJZFwiOlwiYWJjZEBnbWFpbC5jb21cIixcInBhc3N3b3JkXCI6XCJ0ZXN0UGFzc1wiLFwidXNlck5hbWVcIjpcInRlc3ROYW1lXCIsXCJjRGF0ZVwiOjE2OTgwMDE0NDMwMDAsXCJsYXN0TG9naW5cIjoxNjk3OTY5MDQzMzk5LFwiaG9zdElwXCI6XCIxMjcuMC4wLjFcIixcImlzVXNlclwiOjF9IiwiZXhwIjoxNjk4MDU1NDQzfQ.h1Jx1MhbBWli-EZF7WNvyWyE272XZ3Zy9zYfrB0RmoY";
+
     @Test
     public void 유저전용게시판목록조회() throws Exception{
 
         mockMvc.perform(get("/board/userOnly/post")
                         .param("limit","10")
                         .param("offset","0")
-                        .session(generateUserSession()))
+                        .session(generateUserSession())
+                        .header(HttpHeaders.AUTHORIZATION,testToken))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
@@ -121,6 +125,7 @@ class PostControllerTest {
         mockMvc.perform(post("/board/notUserOnly/post")
 //                        .session(generateUserSession())
                         .content(writeContent)
+                        .header(HttpHeaders.AUTHORIZATION, testToken)
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andDo(print())
                 .andExpect(status().isOk());

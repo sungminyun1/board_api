@@ -1,6 +1,7 @@
 package com.springBoard.controller;
 
 import com.springBoard.payload.ApiResponse;
+import com.springBoard.user.model.TokenData;
 import com.springBoard.user.model.User;
 import com.springBoard.user.model.UserLoginForm;
 import com.springBoard.user.model.UserSaveForm;
@@ -34,8 +35,8 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public void login(@RequestBody @Validated UserLoginForm userLoginForm, HttpServletRequest request){
-        userService.login(userLoginForm, request);
+    public TokenData login(@RequestBody @Validated UserLoginForm userLoginForm, HttpServletRequest request){
+        return userService.login(userLoginForm, request);
     }
 
     @PostMapping("/logout")
