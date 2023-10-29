@@ -61,4 +61,43 @@ public class Token implements Serializable {
     public void setRefreshTokenExpire(Date refreshTokenExpire) {
         this.refreshTokenExpire = refreshTokenExpire;
     }
+
+    public static class Builder {
+        private Long userId;
+        private String accessToken;
+        private Date accessTokenExpire;
+        private String refreshToken;
+        private Date refreshTokenExpire;
+
+        public Builder(){}
+
+        public Token build(){
+            return new Token(userId, accessToken, accessTokenExpire, refreshToken, refreshTokenExpire);
+        }
+
+        public Builder userId(Long userId) {
+            this.userId = userId;
+            return this;
+        }
+
+        public Builder accessToken(String accessToken) {
+            this.accessToken = accessToken;
+            return this;
+        }
+
+        public Builder accessTokenExpire(Date accessTokenExpire) {
+            this.accessTokenExpire = accessTokenExpire;
+            return this;
+        }
+
+        public Builder refreshToken(String refreshToken) {
+            this.refreshToken = refreshToken;
+            return this;
+        }
+
+        public Builder refreshTokenExpire(Date refreshTokenExpire) {
+            this.refreshTokenExpire = refreshTokenExpire;
+            return this;
+        }
+    }
 }

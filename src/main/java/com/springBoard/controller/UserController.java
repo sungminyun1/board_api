@@ -1,15 +1,12 @@
 package com.springBoard.controller;
 
-import com.springBoard.payload.ApiResponse;
-import com.springBoard.user.model.TokenData;
+import com.springBoard.user.model.TokenResponse;
 import com.springBoard.user.model.User;
 import com.springBoard.user.model.UserLoginForm;
 import com.springBoard.user.model.UserSaveForm;
 import com.springBoard.user.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,7 +32,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public TokenData login(@RequestBody @Validated UserLoginForm userLoginForm, HttpServletRequest request){
+    public TokenResponse login(@RequestBody @Validated UserLoginForm userLoginForm, HttpServletRequest request){
         return userService.login(userLoginForm, request);
     }
 

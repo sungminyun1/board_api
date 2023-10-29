@@ -3,6 +3,8 @@ package com.springBoard.user.service.impl;
 import com.springBoard.constant.ResponseStatus;
 import com.springBoard.exception.BadRequestException;
 import com.springBoard.payload.ApiResponse;
+import com.springBoard.token.model.Token;
+import com.springBoard.token.repository.TokenRepository;
 import com.springBoard.user.model.*;
 import com.springBoard.user.repository.UserRepository;
 import com.springBoard.user.service.UserService;
@@ -14,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.Date;
 import java.util.Optional;
 
@@ -24,9 +25,11 @@ public class UserServiceImpl implements UserService {
     private final Logger log = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
     private final UserRepository userRepository;
+    private final TokenRepository tokenRepository;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, TokenRepository tokenRepository) {
         this.userRepository = userRepository;
+        this.tokenRepository = tokenRepository;
     }
 
     @Override
@@ -53,7 +56,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public TokenData login(UserLoginForm userLoginForm, HttpServletRequest request) {
+    public TokenResponse login(UserLoginForm userLoginForm, HttpServletRequest request) {
         User loginUser = getLoginUser(userLoginForm);
 
         if(loginUser == null){
@@ -64,8 +67,20 @@ public class UserServiceImpl implements UserService {
         loginUser.setLastLogin(new Date());
         userRepository.updateById(loginUser);
 
-        String token = TokenManager.createToken(loginUser);
-        return new TokenData(token);
+        String accessToken = Util.generateRid();
+        String refreshToken = Util.generateRid();
+
+        Token token = new Token.Builder()
+                .userId(loginUser.getId())
+                .accessToken(accessToken)
+                .accessTokenExpire(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))
+                .refreshToken(refreshToken)
+                .refreshTokenExpire(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 2))
+                .build();
+
+        tokenRepository.save(token);
+
+        return new TokenResponse(accessToken, refreshToken);
     }
 
     public User getLoginUser(UserLoginForm userLoginForm){
