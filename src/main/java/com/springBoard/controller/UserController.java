@@ -1,5 +1,6 @@
 package com.springBoard.controller;
 
+import com.springBoard.aop.LoginCheck;
 import com.springBoard.user.model.TokenResponse;
 import com.springBoard.user.model.User;
 import com.springBoard.user.model.UserLoginForm;

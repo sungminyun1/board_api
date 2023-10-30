@@ -48,7 +48,7 @@ class PostControllerTest {
         mockMvc.perform(get("/board/userOnly/post")
                         .param("limit","10")
                         .param("offset","0")
-                        .session(generateUserSession())
+//                        .session(generateUserSession())
                         .header(HttpHeaders.AUTHORIZATION,testToken))
                 .andDo(print())
                 .andExpect(status().isOk());

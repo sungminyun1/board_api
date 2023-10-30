@@ -1,5 +1,6 @@
 package com.springBoard.controller;
 
+import com.springBoard.aop.LoginCheck;
 import com.springBoard.board.model.Board;
 import com.springBoard.payload.ApiResponse;
 import com.springBoard.post.model.Post;
@@ -26,6 +27,7 @@ public class PostController {
         this.postService = postService;
     }
 
+    @LoginCheck
     @GetMapping("/{boardUrl}/post")
     public List<Post> getList(
             @PathVariable String boardUrl,

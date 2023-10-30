@@ -1,6 +1,8 @@
 package com.springBoard.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.springBoard.aop.LoginCheck;
+import com.springBoard.aop.LoginCheckAspect;
 import com.springBoard.board.repository.BoardRepository;
 import com.springBoard.interceptor.LoginCheckInterceptor;
 import com.springBoard.user.repository.UserRepository;
@@ -24,9 +26,13 @@ public class WebMvcConfig implements WebMvcConfigurer {
         return new BoardUrlMapInit(boardRepository);
     }
 
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new LoginCheckInterceptor(userRepository, objectMapper))
-                .addPathPatterns("/board/**");
-    }
+    @Bean
+    public LoginCheckAspect loginCheckAspect(){
+        return new LoginCheckAspect();}
+
+//    @Override
+//    public void addInterceptors(InterceptorRegistry registry) {
+//        registry.addInterceptor(new LoginCheckInterceptor(userRepository, objectMapper))
+//                .addPathPatterns("/board/**");
+//    }
 }
