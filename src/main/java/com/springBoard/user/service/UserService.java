@@ -13,4 +13,6 @@ public interface UserService {
     TokenResponse login(UserLoginForm userLoginForm, HttpServletRequest request);
 
     void logout(HttpServletRequest request);
+
+    User getLoginUserByToken(String token);
 }

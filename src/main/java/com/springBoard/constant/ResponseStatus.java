@@ -15,7 +15,13 @@ public enum ResponseStatus {
 
     METHOD_ARGUMENT_NOT_VALID(false, 1006, "METHOD_ARGUMENT_NOT_VALID"),
 
-    COMMENT_NOT_EXIST(false, 1007, "COMMENT_NOT_EXIST");
+    COMMENT_NOT_EXIST(false, 1007, "COMMENT_NOT_EXIST"),
+
+    TOKEN_USER_NOT_FOUND(false, 1008, "TOKEN_USER_NOT_FOUND"),
+
+    TOKEN_EXPIRED(false, 1009, "TOKEN_EXPIRED"),
+
+    LOGIN_CHECK_FAILED(false, 1010, "LOGIN_CHECK_FAILED");
 
 
     private final boolean isSuccess;

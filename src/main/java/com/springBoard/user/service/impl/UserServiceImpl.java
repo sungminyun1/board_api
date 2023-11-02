@@ -92,6 +92,28 @@ public class UserServiceImpl implements UserService {
                 .orElse(null);
     }
 
+    @Transactional
+    @Override
+    public User getLoginUserByToken(String token) {
+        Token loginToken = tokenRepository.findByAT(token).orElse(null);
+
+        if(loginToken == null){
+            ApiResponse apiResponse = new ApiResponse(ResponseStatus.TOKEN_USER_NOT_FOUND);
+            throw new BadRequestException(apiResponse);
+        }
+
+        if(loginToken.getAccessTokenExpire().after(new Date())){
+            ApiResponse apiResponse = new ApiResponse(ResponseStatus.TOKEN_EXPIRED);
+            throw new BadRequestException(apiResponse);
+        }
+
+        UserSearchCond userSearchCond = new UserSearchCond();
+        userSearchCond.setId(loginToken.getUserId());
+
+        return userRepository.find(userSearchCond)
+                .orElse(null);
+    }
+
     @Override
     public void logout(HttpServletRequest request) {
 //        HttpSession session = request.getSession(false);
