@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.springBoard.token.repository.mybatis.TokenMapper">
+
+    <insert id="save">
+        insert into token (user_id, access_token, access_token_expire, refresh_token, refresh_token_expire)
+        values (#{userId}, #{accessToken}, #{accessTokenExpire}, #{refreshToken}, #{refreshTokenExpire})
+    </insert>
+
+    <select id="findByAT" resultType="com.springBoard.token.model.Token">
+        select * from token
+        where access_token = #{accessToken}
+    </select>
+
+    <update id="updateByAT">
+        update token
+        set user_id = #{userId},
+        access_token = #{accessToken}
+        access_token_expire = #{accessTokenExpire}
+        refresh_token = #{refreshToken}
+        refresh_token_expire = #{refreshToken}
+        where access_token = #{accessToken}
+    </update>
+
+    <delete id="deleteByAT">
+        delete from token where access_token = #{accessToken}
+    </delete>
+
+</mapper>
