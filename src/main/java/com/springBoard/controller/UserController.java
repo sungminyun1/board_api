@@ -1,6 +1,7 @@
 package com.springBoard.controller;
 
 import com.springBoard.aop.LoginCheck;
+import com.springBoard.token.model.Token;
 import com.springBoard.user.model.TokenResponse;
 import com.springBoard.user.model.User;
 import com.springBoard.user.model.UserLoginForm;
@@ -37,8 +38,10 @@ public class UserController {
         return userService.login(userLoginForm, request);
     }
 
+    @LoginCheck
     @PostMapping("/logout")
     public void logout(HttpServletRequest request){
         userService.logout(request);
     }
+
 }

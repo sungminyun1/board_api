@@ -12,6 +12,7 @@ import com.springBoard.util.TokenManager;
 import com.springBoard.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -116,9 +117,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void logout(HttpServletRequest request) {
-//        HttpSession session = request.getSession(false);
-//        if (session != null) {
-//            session.invalidate();
-//        }
+        String token = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if(token == null){
+            ApiResponse apiResponse = new ApiResponse(ResponseStatus.TOKEN_USER_NOT_FOUND);
+            throw new BadRequestException(apiResponse);
+        }
+        tokenRepository.deleteByAT(token);
     }
 }
