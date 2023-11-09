@@ -68,20 +68,58 @@ public class UserServiceImpl implements UserService {
         loginUser.setLastLogin(new Date());
         userRepository.updateById(loginUser);
 
+        Token token = genUserToken(loginUser);
+
+        tokenRepository.save(token);
+
+        return new TokenResponse(token.getAccessToken(), token.getRefreshToken());
+    }
+
+    @Override
+    @Transactional
+    public TokenResponse reissue(HttpServletRequest request) {
+        String at = request.getHeader(Token.AT_HEADER);
+        String rt = request.getHeader(Token.RT_HEADER);
+
+        Token byAT = tokenRepository.findByAT(at).orElse(null);
+        if(byAT == null){
+            ApiResponse apiResponse = new ApiResponse(ResponseStatus.TOKEN_USER_NOT_FOUND);
+            throw new BadRequestException(apiResponse);
+        }
+
+        if (!rt.equals(byAT.getRefreshToken())) {
+            ApiResponse apiResponse = new ApiResponse(ResponseStatus.INVALID_REFRESH_TOKEN);
+            throw new BadRequestException(apiResponse);
+        }
+
+        UserSearchCond userSearchCond = new UserSearchCond.Builder()
+                .id(byAT.getUserId())
+                .build();
+        User loginUser = userRepository.find(userSearchCond).orElse(null);
+        if(loginUser == null){
+            ApiResponse apiResponse = new ApiResponse(ResponseStatus.TOKEN_USER_NOT_FOUND);
+            throw new BadRequestException(apiResponse);
+        }
+
+        Token token = genUserToken(loginUser);
+
+        tokenRepository.save(token);
+        tokenRepository.deleteByAT(at);
+
+        return new TokenResponse(token.getAccessToken(), token.getRefreshToken());
+    }
+
+    public Token genUserToken(User user){
         String accessToken = Util.generateRid();
         String refreshToken = Util.generateRid();
 
-        Token token = new Token.Builder()
-                .userId(loginUser.getId())
+        return new Token.Builder()
+                .userId(user.getId())
                 .accessToken(accessToken)
                 .accessTokenExpire(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))
                 .refreshToken(refreshToken)
                 .refreshTokenExpire(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 2))
                 .build();
-
-        tokenRepository.save(token);
-
-        return new TokenResponse(accessToken, refreshToken);
     }
 
     public User getLoginUser(UserLoginForm userLoginForm){
@@ -117,11 +155,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void logout(HttpServletRequest request) {
-        String token = request.getHeader(HttpHeaders.AUTHORIZATION);
+        String token = request.getHeader(Token.AT_HEADER);
         if(token == null){
-            ApiResponse apiResponse = new ApiResponse(ResponseStatus.TOKEN_USER_NOT_FOUND);
+            ApiResponse apiResponse = new ApiResponse(ResponseStatus.TOKEN_NOT_FOUND);
             throw new BadRequestException(apiResponse);
         }
         tokenRepository.deleteByAT(token);
     }
+
 }

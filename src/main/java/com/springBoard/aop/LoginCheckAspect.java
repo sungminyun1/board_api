@@ -6,6 +6,7 @@ import com.springBoard.exception.AccessDeniedException;
 import com.springBoard.exception.BadRequestException;
 import com.springBoard.payload.ApiResponse;
 import com.springBoard.post.model.PostPermission;
+import com.springBoard.token.model.Token;
 import com.springBoard.token.repository.TokenRepository;
 import com.springBoard.user.model.User;
 import com.springBoard.user.service.UserService;
@@ -44,7 +45,7 @@ public class LoginCheckAspect {
                 ApiResponse apiResponse = new ApiResponse(ResponseStatus.BOARD_URL_NOT_EXIST);
                 throw new BadRequestException(apiResponse);
             }
-            String token = request.getHeader(HttpHeaders.AUTHORIZATION);
+            String token = request.getHeader(Token.AT_HEADER);
             User loginUser = userService.getLoginUserByToken(token);
 
             if(loginUser == null){

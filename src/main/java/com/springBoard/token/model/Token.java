@@ -5,6 +5,8 @@ import java.util.Date;
 
 public class Token implements Serializable {
     private static final long serialVersionUID = 1L;
+    public static final String AT_HEADER = "ACCESS_TOKEN";
+    public static final String RT_HEADER = "REFRESH_TOKEN";
 
     private Long userId;
     private String accessToken;
