@@ -24,7 +24,7 @@
     </update>
 
     <delete id="deleteByAT">
-        delete from token where access_token = #{accessToken}
+        delete from token where access_token = #{access_token}
     </delete>
 
 </mapper>

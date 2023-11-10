@@ -81,6 +81,11 @@ public class UserServiceImpl implements UserService {
         String at = request.getHeader(Token.AT_HEADER);
         String rt = request.getHeader(Token.RT_HEADER);
 
+        if(at == null || rt == null){
+            ApiResponse apiResponse = new ApiResponse(ResponseStatus.TOKEN_NOT_FOUND);
+            throw new BadRequestException(apiResponse);
+        }
+
         Token byAT = tokenRepository.findByAT(at).orElse(null);
         if(byAT == null){
             ApiResponse apiResponse = new ApiResponse(ResponseStatus.TOKEN_USER_NOT_FOUND);
@@ -141,7 +146,7 @@ public class UserServiceImpl implements UserService {
             throw new BadRequestException(apiResponse);
         }
 
-        if(loginToken.getAccessTokenExpire().after(new Date())){
+        if(loginToken.getAccessTokenExpire().before(new Date())){
             ApiResponse apiResponse = new ApiResponse(ResponseStatus.TOKEN_EXPIRED);
             throw new BadRequestException(apiResponse);
         }

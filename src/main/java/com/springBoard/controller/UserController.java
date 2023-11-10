@@ -35,13 +35,11 @@ public class UserController {
         return userService.login(userLoginForm, request);
     }
 
-    @LoginCheck
     @PostMapping("/logout")
     public void logout(HttpServletRequest request){
         userService.logout(request);
     }
 
-    @LoginCheck
     @GetMapping("/reissue")
     public TokenResponse reissue(HttpServletRequest request){
         return userService.reissue(request);
