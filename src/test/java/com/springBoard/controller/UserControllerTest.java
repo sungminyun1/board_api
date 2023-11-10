@@ -74,32 +74,8 @@ class UserControllerTest {
 
     @Test
     public void 로그인() throws Exception{
-        String content = objectMapper.writeValueAsString(
-                new UserSaveForm("abcd@gmail.com","testPass","testName")
-        );
-        mockMvc.perform(post("/user/signup")
-                        .content(content)
-                        .contentType(MediaType.APPLICATION_JSON_VALUE));
-
-        String loginContent = objectMapper.writeValueAsString(
-                new UserLoginForm("abcd@gmail.com", "testPass")
-        );
-        MvcResult mvcResult = mockMvc.perform(post("/user/login")
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .content(loginContent))
-                .andDo(print())
-                .andExpect(jsonPath("success").value(true))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        ApiResponse resData = objectMapper.readValue(
-                mvcResult.getResponse().getContentAsString(), new TypeReference<ApiResponse>() {
-                });
-
-        String at = ((LinkedHashMap<String, String>) resData.getData()).get("accessToken");
-        String rt = ((LinkedHashMap<String, String>) resData.getData()).get("refreshToken");
-
-        User loginUserByToken = userService.getLoginUserByToken(at);
+        TokenResponse tokenResponse = genLoginToken();
+        User loginUserByToken = userService.getLoginUserByToken(tokenResponse.getAccessToken());
         Assertions.assertThat(loginUserByToken.getUserId()).isEqualTo("abcd@gmail.com");
     }
 
@@ -145,35 +121,15 @@ class UserControllerTest {
 
     @Test
     public void 로그아웃() throws Exception{
-        String content = objectMapper.writeValueAsString(
-                new UserSaveForm("abcd@gmail.com","testPass","testName")
-        );
-        mockMvc.perform(post("/user/signup")
-                .content(content)
-                .contentType(MediaType.APPLICATION_JSON_VALUE));
-
         String loginContent = objectMapper.writeValueAsString(
                 new UserLoginForm("abcd@gmail.com", "testPass")
         );
-        MvcResult mvcResult = mockMvc.perform(post("/user/login")
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .content(loginContent))
-                .andExpect(jsonPath("success").value(true))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        ApiResponse resData = objectMapper.readValue(
-                mvcResult.getResponse().getContentAsString(), new TypeReference<ApiResponse>() {
-                });
-
-        String at = ((LinkedHashMap<String, String>) resData.getData()).get("accessToken");
-        String rt = ((LinkedHashMap<String, String>) resData.getData()).get("refreshToken");
-
+        TokenResponse tokenResponse = genLoginToken();
         MvcResult logoutResult = mockMvc.perform(post("/user/logout")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(loginContent)
-                        .header(Token.AT_HEADER, at)
-                        .header(Token.RT_HEADER,rt))
+                        .header(Token.AT_HEADER, tokenResponse.getAccessToken())
+                        .header(Token.RT_HEADER,tokenResponse.getRefreshToken()))
                 .andDo(print())
                 .andExpect(jsonPath("success").value(true))
                 .andExpect(status().isOk())
@@ -181,47 +137,28 @@ class UserControllerTest {
 
 
         org.junit.jupiter.api.Assertions.assertThrows(BadRequestException.class,
-                () -> userService.getLoginUserByToken(at));
+                () -> userService.getLoginUserByToken(tokenResponse.getAccessToken()));
     }
 
     @Test
     public void 토큰_재발급() throws Exception{
-        String content = objectMapper.writeValueAsString(
-                new UserSaveForm("abcd@gmail.com","testPass","testName")
-        );
-        mockMvc.perform(post("/user/signup")
-                .content(content)
-                .contentType(MediaType.APPLICATION_JSON_VALUE));
-
         String loginContent = objectMapper.writeValueAsString(
                 new UserLoginForm("abcd@gmail.com", "testPass")
         );
-        MvcResult mvcResult = mockMvc.perform(post("/user/login")
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .content(loginContent))
-                .andExpect(jsonPath("success").value(true))
-                .andExpect(status().isOk())
-                .andReturn();
 
-        ApiResponse resData = objectMapper.readValue(
-                mvcResult.getResponse().getContentAsString(), new TypeReference<ApiResponse>() {
-                });
-
-        String at = ((LinkedHashMap<String, String>) resData.getData()).get("accessToken");
-        String rt = ((LinkedHashMap<String, String>) resData.getData()).get("refreshToken");
-
+        TokenResponse tokenResponse = genLoginToken();
         MvcResult logoutResult = mockMvc.perform(get("/user/reissue")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(loginContent)
-                        .header(Token.AT_HEADER, at)
-                        .header(Token.RT_HEADER,rt))
+                        .header(Token.AT_HEADER, tokenResponse.getAccessToken())
+                        .header(Token.RT_HEADER,tokenResponse.getRefreshToken()))
                 .andDo(print())
                 .andExpect(jsonPath("success").value(true))
                 .andExpect(status().isOk())
                 .andReturn();
 
         org.junit.jupiter.api.Assertions.assertThrows(BadRequestException.class,
-                () -> userService.getLoginUserByToken(at));
+                () -> userService.getLoginUserByToken(tokenResponse.getAccessToken()));
 
         ApiResponse resData2 = objectMapper.readValue(
                 logoutResult.getResponse().getContentAsString(), new TypeReference<ApiResponse>() {
@@ -232,5 +169,33 @@ class UserControllerTest {
 
         User loginUserByToken = userService.getLoginUserByToken(at2);
         Assertions.assertThat(loginUserByToken.getUserId()).isEqualTo("abcd@gmail.com");
+    }
+
+    public TokenResponse genLoginToken() throws Exception{
+        String content = objectMapper.writeValueAsString(
+                new UserSaveForm("abcd@gmail.com","testPass","testName")
+        );
+        mockMvc.perform(post("/user/signup")
+                .content(content)
+                .contentType(MediaType.APPLICATION_JSON_VALUE));
+
+        String loginContent = objectMapper.writeValueAsString(
+                new UserLoginForm("abcd@gmail.com", "testPass")
+        );
+        MvcResult mvcResult = mockMvc.perform(post("/user/login")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(loginContent))
+                .andExpect(jsonPath("success").value(true))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        ApiResponse resData = objectMapper.readValue(
+                mvcResult.getResponse().getContentAsString(), new TypeReference<ApiResponse>() {
+                });
+
+        String at = ((LinkedHashMap<String, String>) resData.getData()).get("accessToken");
+        String rt = ((LinkedHashMap<String, String>) resData.getData()).get("refreshToken");
+
+        return new TokenResponse(at, rt);
     }
 }
