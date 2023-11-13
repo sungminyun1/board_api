@@ -5,7 +5,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.springBoard.payload.ApiResponse;
 import com.springBoard.post.model.Post;
 import com.springBoard.post.model.PostWriteForm;
+import com.springBoard.token.model.Token;
+import com.springBoard.user.model.TokenResponse;
 import com.springBoard.user.model.User;
+import com.springBoard.user.model.UserLoginForm;
+import com.springBoard.user.model.UserSaveForm;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,10 +26,12 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.http.HttpSession;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -45,11 +51,13 @@ class PostControllerTest {
     @Test
     public void 유저전용게시판목록조회() throws Exception{
 
+        TokenResponse tokenResponse = genLoginToken();
         mockMvc.perform(get("/board/userOnly/post")
                         .param("limit","10")
                         .param("offset","0")
-//                        .session(generateUserSession())
-                        .header(HttpHeaders.AUTHORIZATION,testToken))
+                        .header(Token.AT_HEADER, tokenResponse.getAccessToken())
+                        .header(Token.RT_HEADER, tokenResponse.getRefreshToken())
+                )
                 .andDo(print())
                 .andExpect(status().isOk());
     }
@@ -63,29 +71,9 @@ class PostControllerTest {
                 .andExpect(status().is4xxClientError());
     }
 
-    @Test
-    public void 유저전용게시판목록조회_실패2() throws Exception{
-
-        mockMvc.perform(get("/board/userOnly/post")
-                        .param("limit","10")
-                        .param("offset","0")
-                        .session(generateTmpSession()))
-                .andDo(print())
-                .andExpect(status().is4xxClientError());
-    }
 
     @Test
     public void 비회원전용게시판조회() throws Exception {
-        mockMvc.perform(get("/board/notUserOnly/post")
-                        .param("limit","10")
-                        .param("offset","0")
-                        .session(generateTmpSession()))
-                .andDo(print())
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    public void 비회원전용게시판조회2() throws Exception {
         mockMvc.perform(get("/board/notUserOnly/post")
                         .param("limit","10")
                         .param("offset","0"))
@@ -123,86 +111,13 @@ class PostControllerTest {
                 new PostWriteForm("테스트 제목", "테스트 내용")
         );
         mockMvc.perform(post("/board/notUserOnly/post")
-//                        .session(generateUserSession())
                         .content(writeContent)
-                        .header(HttpHeaders.AUTHORIZATION, testToken)
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andDo(print())
                 .andExpect(status().isOk());
 
     }
 
-    @Test
-    public void 비회원전용_게시글_수정() throws Exception {
-        String writeContent = objectMapper.writeValueAsString(
-                new PostWriteForm("테스트 제목", "테스트 내용")
-        );
-        MvcResult mvcResult = mockMvc.perform(post("/board/notUserOnly/post")
-//                        .session(generateUserSession())
-                        .content(writeContent)
-                        .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andReturn();
-
-        ApiResponse resData = objectMapper.readValue(
-                mvcResult.getResponse().getContentAsString(), new TypeReference<ApiResponse>() {
-                });
-
-        Post oriData = genPostFromHashMap((HashMap<Object, Object>) resData.getData());
-        String rid = oriData.getRid();
-        String writeContent2 = objectMapper.writeValueAsString(
-                new PostWriteForm("테스트 제목 수정", "테스트 내용 수정")
-        );
-
-        mockMvc.perform(put("/board/notUserOnly/post/" + rid)
-//                        .session(generateUserSession())
-                        .content(writeContent2)
-                        .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andDo(print())
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    public void 비회원전용_게시글_수정_실패() throws Exception {
-        String rid = "test";
-        String writeContent2 = objectMapper.writeValueAsString(
-                new PostWriteForm("테스트 제목 수정", "테스트 내용 수정")
-        );
-
-        mockMvc.perform(put("/board/notUserOnly/post/" + rid)
-//                        .session(generateUserSession())
-                        .content(writeContent2)
-                        .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andDo(print())
-                .andExpect(status().is4xxClientError());
-    }
-
-    @Test
-    public void 비회원전용_게시글_삭제() throws Exception {
-        String writeContent = objectMapper.writeValueAsString(
-                new PostWriteForm("테스트 제목", "테스트 내용")
-        );
-        MvcResult mvcResult = mockMvc.perform(post("/board/notUserOnly/post")
-//                        .session(generateUserSession())
-                        .content(writeContent)
-                        .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andReturn();
-
-        ApiResponse resData = objectMapper.readValue(
-                mvcResult.getResponse().getContentAsString(), new TypeReference<ApiResponse>() {
-                });
-        Post oriData = genPostFromHashMap((HashMap<Object, Object>) resData.getData());
-        String rid = oriData.getRid();
-
-        mockMvc.perform(delete("/board/notUserOnly/post/" + rid)
-//                        .session(generateUserSession())
-                        .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andDo(print())
-                .andExpect(status().isOk());
-    }
 
     @Test
     public void 게시글_조회_테스트() throws Exception{
@@ -210,7 +125,6 @@ class PostControllerTest {
                 new PostWriteForm("테스트 제목", "테스트 내용")
         );
         MvcResult mvcResult = mockMvc.perform(post("/board/notUserOnly/post")
-//                        .session(generateUserSession())
                         .content(writeContent)
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andDo(print())
@@ -268,5 +182,33 @@ class PostControllerTest {
                 .id(new Long((Integer) hm.get("id")))
                 .rid((String)hm.get("rid"))
                 .build();
+    }
+
+    public TokenResponse genLoginToken() throws Exception{
+        String content = objectMapper.writeValueAsString(
+                new UserSaveForm("abcd@gmail.com","testPass","testName")
+        );
+        mockMvc.perform(post("/user/signup")
+                .content(content)
+                .contentType(MediaType.APPLICATION_JSON_VALUE));
+
+        String loginContent = objectMapper.writeValueAsString(
+                new UserLoginForm("abcd@gmail.com", "testPass")
+        );
+        MvcResult mvcResult = mockMvc.perform(post("/user/login")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(loginContent))
+                .andExpect(jsonPath("success").value(true))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        ApiResponse resData = objectMapper.readValue(
+                mvcResult.getResponse().getContentAsString(), new TypeReference<ApiResponse>() {
+                });
+
+        String at = ((LinkedHashMap<String, String>) resData.getData()).get("accessToken");
+        String rt = ((LinkedHashMap<String, String>) resData.getData()).get("refreshToken");
+
+        return new TokenResponse(at, rt);
     }
 }

@@ -36,6 +36,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<Post> getPostList(String boardUrl, Integer limit, Integer offset) {
+
         Board board = Board.boardUrlMap.get("/" + boardUrl);
 
         PostSearchCond postSearchCond = new PostSearchCond.Builder()

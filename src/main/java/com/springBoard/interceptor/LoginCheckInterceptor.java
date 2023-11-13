@@ -28,6 +28,9 @@ import javax.servlet.http.HttpSession;
 import java.util.Date;
 import java.util.Optional;
 
+/**
+ * @deprecated 
+ */
 public class LoginCheckInterceptor implements HandlerInterceptor {
     private final Logger log = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
