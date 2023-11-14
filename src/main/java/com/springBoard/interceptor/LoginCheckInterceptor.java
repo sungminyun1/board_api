@@ -8,6 +8,7 @@ import com.springBoard.exception.AccessDeniedException;
 import com.springBoard.exception.BadRequestException;
 import com.springBoard.payload.ApiResponse;
 import com.springBoard.post.model.PostPermission;
+import com.springBoard.token.model.Token;
 import com.springBoard.user.model.User;
 import com.springBoard.user.model.UserSearchCond;
 import com.springBoard.user.repository.UserRepository;
@@ -27,6 +28,9 @@ import javax.servlet.http.HttpSession;
 import java.util.Date;
 import java.util.Optional;
 
+/**
+ * @deprecated 
+ */
 public class LoginCheckInterceptor implements HandlerInterceptor {
     private final Logger log = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
@@ -49,7 +53,7 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
         }
 
         HttpSession session = request.getSession();
-        String token = request.getHeader(HttpHeaders.AUTHORIZATION);
+        String token = request.getHeader(Token.AT_HEADER);
         User tokenUser = null;
         if (token != null) {
             String subject = TokenManager.getSubject(token);

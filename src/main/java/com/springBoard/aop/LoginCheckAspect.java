@@ -6,9 +6,12 @@ import com.springBoard.exception.AccessDeniedException;
 import com.springBoard.exception.BadRequestException;
 import com.springBoard.payload.ApiResponse;
 import com.springBoard.post.model.PostPermission;
+import com.springBoard.token.model.Token;
 import com.springBoard.token.repository.TokenRepository;
 import com.springBoard.user.model.User;
+import com.springBoard.user.repository.UserRepository;
 import com.springBoard.user.service.UserService;
+import com.springBoard.util.Util;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -31,11 +34,12 @@ public class LoginCheckAspect {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private UserRepository userRepository;
 
     @Around(value = "@annotation(loginCheck)")
     public Object loginCheck(ProceedingJoinPoint joinPoint, LoginCheck loginCheck) throws Throwable {
         try{
-
             HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 
             String url = request.getRequestURI().split("/")[2];
@@ -44,15 +48,19 @@ public class LoginCheckAspect {
                 ApiResponse apiResponse = new ApiResponse(ResponseStatus.BOARD_URL_NOT_EXIST);
                 throw new BadRequestException(apiResponse);
             }
-            String token = request.getHeader(HttpHeaders.AUTHORIZATION);
-            User loginUser = userService.getLoginUserByToken(token);
+            String token = request.getHeader(Token.AT_HEADER);
+            if(token == null){
+                return checkGuest(joinPoint, board);
+            }
 
+            User loginUser = userService.getLoginUserByToken(token);
             if(loginUser == null){
                 ApiResponse apiResponse = new ApiResponse(ResponseStatus.TOKEN_USER_NOT_FOUND);
                 throw new BadRequestException(apiResponse);
             }
 
             if(board.getPermission().equals(PostPermission.USER)){
+
                 if(token == null || loginUser == null ){
                     ApiResponse apiResponse = new ApiResponse(ResponseStatus.BOARD_ACCESS_DENIED);
                     throw new AccessDeniedException(apiResponse);
@@ -61,16 +69,33 @@ public class LoginCheckAspect {
                     ApiResponse apiResponse = new ApiResponse(ResponseStatus.BOARD_ACCESS_DENIED);
                     throw new AccessDeniedException(apiResponse);
                 }
-                return true;
             }
             request.setAttribute("tokenUser", loginUser);
 
             return joinPoint.proceed();
-        }catch (Throwable e){
-            log.error("loginCheck catch error {}", e.getMessage());
+        }catch (Exception e){
+            log.error("loginCheck catch error {}", e.getClass() + e.getMessage());
             ApiResponse apiResponse = new ApiResponse(ResponseStatus.LOGIN_CHECK_FAILED);
             throw new BadRequestException(apiResponse);
         }
     }
 
+    private Object checkGuest(ProceedingJoinPoint joinPoint,Board board) throws Throwable{
+        if (board.getPermission().equals(PostPermission.USER)) {
+            ApiResponse apiResponse = new ApiResponse(ResponseStatus.BOARD_ACCESS_DENIED);
+            throw new AccessDeniedException(apiResponse);
+        }
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+        User newUser = new User.Builder()
+                .isUser(0)
+                .hostIp(Util.getClientIp(request))
+                .userId(Util.generateRid())
+                .userName(Util.generateRid())
+                .password("unknown_user_pass")
+                .build();
+
+        userRepository.save(newUser);
+        request.setAttribute("tokenUser", newUser);
+        return joinPoint.proceed();
+    }
 }

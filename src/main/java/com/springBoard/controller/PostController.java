@@ -36,6 +36,7 @@ public class PostController {
         return postService.getPostList(boardUrl, limit, offset);
     }
 
+    @LoginCheck
     @PostMapping("/{boardUrl}/post")
     public Post writePost(
             @PathVariable String boardUrl,
@@ -45,6 +46,7 @@ public class PostController {
         return postService.writePost(boardUrl, postWriteForm, request);
     }
 
+    @LoginCheck
     @PutMapping("/{boardUrl}/post/{postRid}")
     public Post updatePost(
             @PathVariable String boardUrl,
@@ -55,6 +57,7 @@ public class PostController {
         return postService.updatePost(boardUrl, postRid, postWriteForm, request);
     }
 
+    @LoginCheck
     @DeleteMapping("/{boardUrl}/post/{postRid}")
     public void deletePost(
             @PathVariable String boardUrl,
@@ -64,6 +67,7 @@ public class PostController {
         postService.deletePost(boardUrl, postRid, request);
     }
 
+    @LoginCheck
     @GetMapping("/{boardUrl}/post/{postRid}")
     public Post readPost(
             @PathVariable String boardUrl,

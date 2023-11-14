@@ -19,9 +19,13 @@ public enum ResponseStatus {
 
     TOKEN_USER_NOT_FOUND(false, 1008, "TOKEN_USER_NOT_FOUND"),
 
-    TOKEN_EXPIRED(false, 1009, "TOKEN_EXPIRED"),
+    TOKEN_NOT_FOUND(false, 1009, "TOKEN_NOT_FOUND"),
 
-    LOGIN_CHECK_FAILED(false, 1010, "LOGIN_CHECK_FAILED");
+    TOKEN_EXPIRED(false, 1010, "TOKEN_EXPIRED"),
+
+    LOGIN_CHECK_FAILED(false, 1011, "LOGIN_CHECK_FAILED"),
+
+    INVALID_REFRESH_TOKEN(false, 1012, "INVALID_REFRESH_TOKEN");
 
 
     private final boolean isSuccess;
