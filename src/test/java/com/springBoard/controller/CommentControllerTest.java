@@ -6,7 +6,11 @@ import com.springBoard.comment.model.Comment;
 import com.springBoard.comment.model.CommentWriteForm;
 import com.springBoard.payload.ApiResponse;
 import com.springBoard.post.model.Post;
+import com.springBoard.token.model.Token;
+import com.springBoard.user.model.TokenResponse;
 import com.springBoard.user.model.User;
+import com.springBoard.user.model.UserLoginForm;
+import com.springBoard.user.model.UserSaveForm;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,10 +24,12 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -41,20 +47,26 @@ class CommentControllerTest {
 
     @Test
     public void 댓글_목록_조회() throws Exception {
+        TokenResponse tokenResponse = genLoginToken();
         mockMvc.perform(get("/board/userOnly/post/test/comment")
                         .param("limit","10")
                         .param("offset","0")
-                        .session(generateUserSession()))
+                        .header(Token.AT_HEADER, tokenResponse.getAccessToken())
+                        .header(Token.RT_HEADER, tokenResponse.getRefreshToken())
+                )
                 .andDo(print())
                 .andExpect(status().isOk());
     }
 
     @Test
     public void 댓글_목록_조회_실패() throws Exception {
+        TokenResponse tokenResponse = genLoginToken();
         mockMvc.perform(get("/board/userOnly/post/test33/comment")
                         .param("limit","10")
                         .param("offset","0")
-                        .session(generateUserSession()))
+                        .header(Token.AT_HEADER, tokenResponse.getAccessToken())
+                        .header(Token.RT_HEADER, tokenResponse.getRefreshToken())
+                )
                 .andDo(print())
                 .andExpect(status().is4xxClientError());
     }
@@ -65,8 +77,10 @@ class CommentControllerTest {
                 new CommentWriteForm("테스트 댓글")
         );
 
+        TokenResponse tokenResponse = genLoginToken();
         mockMvc.perform(post("/board/userOnly/post/test/comment")
-                        .session(generateUserSession())
+                        .header(Token.AT_HEADER, tokenResponse.getAccessToken())
+                        .header(Token.RT_HEADER, tokenResponse.getRefreshToken())
                         .content(writeContent)
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andDo(print())
@@ -79,8 +93,10 @@ class CommentControllerTest {
                 new CommentWriteForm("테스트 댓글")
         );
 
+        TokenResponse tokenResponse = genLoginToken();
         MvcResult mvcResult = mockMvc.perform(post("/board/userOnly/post/test/comment")
-                        .session(generateUserSession())
+                        .header(Token.AT_HEADER, tokenResponse.getAccessToken())
+                        .header(Token.RT_HEADER, tokenResponse.getRefreshToken())
                         .content(writeContent)
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andDo(print())
@@ -99,7 +115,8 @@ class CommentControllerTest {
         );
 
         mockMvc.perform(put("/board/userOnly/post/test/comment/" + rid)
-                        .session(generateUserSession())
+                        .header(Token.AT_HEADER, tokenResponse.getAccessToken())
+                        .header(Token.RT_HEADER, tokenResponse.getRefreshToken())
                         .content(writeContent2)
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andDo(print())
@@ -112,8 +129,10 @@ class CommentControllerTest {
                 new CommentWriteForm("테스트 댓글")
         );
 
+        TokenResponse tokenResponse = genLoginToken();
         MvcResult mvcResult = mockMvc.perform(post("/board/userOnly/post/test/comment")
-                        .session(generateUserSession())
+                        .header(Token.AT_HEADER, tokenResponse.getAccessToken())
+                        .header(Token.RT_HEADER, tokenResponse.getRefreshToken())
                         .content(writeContent)
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andDo(print())
@@ -128,7 +147,8 @@ class CommentControllerTest {
         String rid = oriData.getRid();
 
         mockMvc.perform(delete("/board/userOnly/post/test/comment/" + rid)
-                        .session(generateUserSession())
+                        .header(Token.AT_HEADER, tokenResponse.getAccessToken())
+                        .header(Token.RT_HEADER, tokenResponse.getRefreshToken())
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andDo(print())
                 .andExpect(status().isOk());
@@ -153,5 +173,33 @@ class CommentControllerTest {
                 .build();
         session.setAttribute("user",user);
         return session;
+    }
+
+    public TokenResponse genLoginToken() throws Exception{
+        String content = objectMapper.writeValueAsString(
+                new UserSaveForm("abcd@gmail.com","testPass","testName")
+        );
+        mockMvc.perform(post("/user/signup")
+                .content(content)
+                .contentType(MediaType.APPLICATION_JSON_VALUE));
+
+        String loginContent = objectMapper.writeValueAsString(
+                new UserLoginForm("abcd@gmail.com", "testPass")
+        );
+        MvcResult mvcResult = mockMvc.perform(post("/user/login")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(loginContent))
+                .andExpect(jsonPath("success").value(true))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        ApiResponse resData = objectMapper.readValue(
+                mvcResult.getResponse().getContentAsString(), new TypeReference<ApiResponse>() {
+                });
+
+        String at = ((LinkedHashMap<String, String>) resData.getData()).get("accessToken");
+        String rt = ((LinkedHashMap<String, String>) resData.getData()).get("refreshToken");
+
+        return new TokenResponse(at, rt);
     }
 }

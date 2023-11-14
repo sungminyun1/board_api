@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @Transactional
@@ -62,10 +63,11 @@ public class CommentServiceImpl implements CommentService {
             throw new BadRequestException(apiResponse);
         }
 
-        if(comment.getUserId() != tokenUser.getId()){
+        if(!Objects.equals(comment.getUserId(), tokenUser.getId())){
             ApiResponse apiResponse = new ApiResponse(ResponseStatus.MEMBER_ACCESS_DENIED);
             throw new AccessDeniedException(apiResponse);
         }
+
 
         comment.setText(commentWriteForm.getContent());
         comment.setuDate(new Date());
@@ -86,7 +88,7 @@ public class CommentServiceImpl implements CommentService {
             throw new BadRequestException(apiResponse);
         }
 
-        if(comment.getUserId() != tokenUser.getId()){
+        if(!Objects.equals(comment.getUserId(), tokenUser.getId())){
             ApiResponse apiResponse = new ApiResponse(ResponseStatus.MEMBER_ACCESS_DENIED);
             throw new AccessDeniedException(apiResponse);
         }

@@ -60,6 +60,7 @@ public class LoginCheckAspect {
             }
 
             if(board.getPermission().equals(PostPermission.USER)){
+
                 if(token == null || loginUser == null ){
                     ApiResponse apiResponse = new ApiResponse(ResponseStatus.BOARD_ACCESS_DENIED);
                     throw new AccessDeniedException(apiResponse);

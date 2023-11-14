@@ -1,5 +1,6 @@
 package com.springBoard.controller;
 
+import com.springBoard.aop.LoginCheck;
 import com.springBoard.comment.model.Comment;
 import com.springBoard.comment.model.CommentWriteForm;
 import com.springBoard.comment.service.CommentService;
@@ -25,6 +26,7 @@ public class CommentController {
         this.postCommentCompositeService = postCommentCompositeService;
     }
 
+    @LoginCheck
     @GetMapping("")
     public List<Comment> getList(
             @PathVariable String boardUrl,
@@ -35,6 +37,7 @@ public class CommentController {
         return postCommentCompositeService.getCommentList(postRid, limit, offset);
     }
 
+    @LoginCheck
     @PostMapping("")
     public Comment writeComment(
             @PathVariable String boardUrl,
@@ -46,6 +49,7 @@ public class CommentController {
         return postCommentCompositeService.writeComment(postRid, commentWriteForm, request);
     }
 
+    @LoginCheck
     @PutMapping("/{commentRid}")
     public Comment updateComment(
             @PathVariable String commentRid,
@@ -55,6 +59,7 @@ public class CommentController {
         return commentService.updateComment(commentRid, commentWriteForm, request);
     }
 
+    @LoginCheck
     @DeleteMapping("/{commentRid}")
     public void deleteComment(
             @PathVariable String commentRid,
